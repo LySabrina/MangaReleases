@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 
 @AllArgsConstructor
@@ -15,7 +16,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String series;      //parent series
+    private String series;
 
     @Column(columnDefinition = "ENUM('MANGA', 'LIGHT_NOVEL', 'MANHWA', 'OEL')")
     @Enumerated(EnumType.STRING)
@@ -28,8 +29,7 @@ public class Book {
 
     private String ISBN;
 
-    private Calendar releaseDate;
-
+    private LocalDate releaseDate;
 
 
 }
