@@ -74,8 +74,8 @@ public class SevenSeaScraper {
         Elements volumes = doc.select(".series-volume");
         for(Element volume : volumes){
             Element volumeName = volume.select("h3").first();
-            String s = volume.ownText().substring(2); //substring(2) because it has ":  " as some starter
-            System.out.println(s);
+            String volumeInfo = volume.ownText().substring(2); //substring(2) because it has ":  " as some starter
+            System.out.println(volumeInfo);
         }
     }
 
