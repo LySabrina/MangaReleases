@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-### BookCover Directory ###
-!BookCovers/
-BookCovers/*
-!BookCovers/README.txt
+/src/main/resources/static/BookCovers/*
+!/src/main/resources/static/BookCovers/*
+
+!/src/main/resources/static/BookCovers/BookCovers/README.txt
