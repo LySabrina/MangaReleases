@@ -11,6 +11,7 @@ import {
   Route,
   useParams,
 } from "react-router-dom";
+import BookDetail from "./pages/BookDetail";
 function App() {
   return (
     <div className="App">
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path = "/login" element={<Login/>}/>
+          <Route path = "/BookDetail:id" element = {<BookDetail/>} />
         </Routes>
       </Router>
     </div>

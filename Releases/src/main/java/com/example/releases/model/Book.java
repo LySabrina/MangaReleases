@@ -18,7 +18,7 @@ public class Book {
     private String name;
     private String series;
 
-    @Column(columnDefinition = "ENUM('MANGA', 'LIGHT_NOVEL', 'MANHWA', 'OEL')")
+    @Column(columnDefinition = "ENUM('MANGA', 'NOVEL', 'MANHWA', 'OEL')")
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -30,6 +30,16 @@ public class Book {
     private String ISBN;
 
     private LocalDate releaseDate;
+    private String imagePath;
 
-
+    public Book(String name, String series, Type type, String author, String artist, double price, String ISBN, LocalDate releaseDate) {
+        this.name = name;
+        this.series = series;
+        this.type = type;
+        this.author = author;
+        this.artist = artist;
+        this.price = price;
+        this.ISBN = ISBN;
+        this.releaseDate = releaseDate;
+    }
 }

@@ -1,6 +1,9 @@
 package com.example.releases.services;
 
+import com.beust.ah.A;
 import com.example.releases.model.Book;
+import com.example.releases.model.Type;
+import com.example.releases.respository.BookRepository;
 import com.example.releases.utilities.ImageDownloader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -26,7 +29,7 @@ import java.util.concurrent.Executors;
  * TODO FUTURE UPDATES: Possibly check if book series info is updated (ex. upcoming release of new book)
  */
 public class SevenSeaScraper {
-    private static Set<String> bookCollection = new HashSet<String>();
+    private static Set<Book> bookCollection = new HashSet<>();
     private static ArrayList<String> links = new ArrayList<>();
     private int PAGES_LIMIT = 10;
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
@@ -53,12 +56,7 @@ public class SevenSeaScraper {
      * @param url
      * @throws IOException
      */
-    private static void seriesScrape(String url) throws IOException {
-        //FUTURE POSSIBLE IMPROVEMENTS = THREADS
-//        ExecutorService service = Executors.newFixedThreadPool(10); //create 10 threads ready to scrape
-        //wait for around 1 second before sending another request
-
-
+    public static void seriesScrape(String url) throws IOException {
         // <!-------- GETS THE AUTHOR AND GENRES AND SERIES NAME  -------->
         Document doc = Jsoup.connect(url).userAgent(USER_AGENT).headers(HTTP_HEADERS).get();
         Element bookContainer = doc.getElementById("series-meta");
@@ -85,39 +83,63 @@ public class SevenSeaScraper {
                 authors.add(a.text());
             }
         }
-        System.out.println("AUTHOR & ARTIST: " + authors.toString());
-        System.out.println("GENRE: " + genres.toString());
 
         // <!------- GETS ALL THE VOLUMES NAME IN THE SERIES, RELEASE DATE, PRICE, FORMAT ------->
         Elements volumes = doc.select(".series-volume");
         for(Element volume : volumes){
+
             String volumeName = volume.selectFirst("h3").child(1).ownText();
             Element image = volume.child(0).child(0);
             String imageURL = image.attr("src");
             //volume.ownText().substring(2) ==> because it has ":  " as some start and need to get rid of it
             //VolumeInfo contains info such as price, format, ISBN, releaseDate
-            String[] volumeInfo = volume.ownText().substring(2).split(" ");
+            List<String> dirtyVolumeInfo = Arrays.asList(volume.ownText().substring(2).split(" "));
+            ArrayList<String> volumeInfo = new ArrayList<>(dirtyVolumeInfo);
+            if(volumeInfo.contains("Light")){
+                volumeInfo.remove("Light");
+            }
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-            LocalDate releaseDate = LocalDate.parse(volumeInfo[0], dateFormatter);
-            double price = Double.parseDouble(volumeInfo[1].substring(1));
-            String format = volumeInfo[2];
-            String ISBN = volumeInfo[3];
+            LocalDate releaseDate = LocalDate.parse(volumeInfo.get(0), dateFormatter);
+            double price;
+            String format;
+            String ISBN;
+
+            //light novel is having issue with spacing
+            System.out.println("VOLUME : " + volumeName);
+            for(int i =0 ;i < volumeInfo.size(); i++){
+                System.out.print("INDEX " + i +": " +volumeInfo.get(i) + " ");
+            }
+            System.out.println();
+            if(volumeInfo.size() > 4){
+                price = Double.parseDouble(volumeInfo.get(2).substring(1));
+                format = volumeInfo.get(3).toUpperCase();
+                ISBN = volumeInfo.get(4);
+            }
+            else{
+                price = Double.parseDouble(volumeInfo.get(1).substring(1));
+                format = volumeInfo.get(2).toUpperCase();
+                ISBN = volumeInfo.get(3);
+            }
+
 
             ImageDownloader.downloadImageCovers(doc, seriesName, volumeName, imageURL);
-            System.out.println(volumeName);
-
-
+//            Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate);
+//            bookCollection.add(book);
         }
     }
 
+    public static Set<Book> getBooks() throws IOException{
+        getAllLinks();
+        for(String url : links){
+            seriesScrape(url);
+        }
+        return bookCollection;
+    }
     public static void main(String[] args) throws IOException {
         getAllLinks();
-
-        for(int i = 0; i < 2; i++){
-            String s = links.get(i);
-            seriesScrape(s);
+        for(String url : links){
+            seriesScrape(url);
         }
-
     }
 }
 

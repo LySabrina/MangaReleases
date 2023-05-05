@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+//CLASS seems to use the working directory of MangaReleases instead of Releases
 public class ImageDownloader {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
@@ -23,23 +24,29 @@ public class ImageDownloader {
             Elements seriesVolume = doc.select(".series-volume");
 
             //Making a directory with the series name
-            File parentDir = new File("./src/main/resources/static/BookCovers/");
+            File parentDir = new File("Releases/src/main/resources/static/BookCovers/");
             File childDir = new File(parentDir, seriesName);
+
             if(!childDir.exists()){
                 boolean created = childDir.mkdir(); //if the directory failed to be created throw an exception
                 if(!created){
-                    throw new Exception();
+                    throw new IOException();
                 }
             }
             File f = new File(childDir, volumeName + ".jpg");
-            if(f.createNewFile()){
-                System.out.println("File created");
-                Connection.Response response = Jsoup.connect(imageURL).ignoreContentType(true).execute();
-                System.out.println("Currently downloading: " + f);
-                FileOutputStream out = new FileOutputStream(f);
-                out.write(response.bodyAsBytes());
-                out.close();
+            if(!f.exists()){
+                if(f.createNewFile()){
+                    Connection.Response response = Jsoup.connect(imageURL).ignoreContentType(true).execute();
+                    FileOutputStream out = new FileOutputStream(f);
+                    out.write(response.bodyAsBytes());
+                    out.close();
+                    System.out.println("DONWLOADED " + volumeName);
+                }
+                else{
+                    System.out.println("FAILED TO CREATE FILE " + volumeName + ".jpg" );
+                }
             }
+
         }
         catch (Exception e){
             e.printStackTrace();

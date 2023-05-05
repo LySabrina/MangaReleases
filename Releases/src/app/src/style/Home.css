@@ -1,0 +1,8 @@
+.filter-container{
+    
+}
+
+.table{
+    display: flex;
+    flex-wrap: wrap;   
+}
