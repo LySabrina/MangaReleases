@@ -6,3 +6,9 @@
     display: flex;
     flex-wrap: wrap;   
 }
+
+.table-container{
+    display:flex;
+    
+}
+

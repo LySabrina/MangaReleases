@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
  * TODO FUTURE UPDATES: Possibly check if book series info is updated (ex. upcoming release of new book)
  */
 public class SevenSeaScraper {
-    private static Set<Book> bookCollection = new HashSet<>();
+    private static List<Book> bookCollection = new ArrayList<>();
     private static ArrayList<String> links = new ArrayList<>();
     private int PAGES_LIMIT = 10;
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
@@ -120,19 +120,21 @@ public class SevenSeaScraper {
                 format = volumeInfo.get(2).toUpperCase();
                 ISBN = volumeInfo.get(3);
             }
-
-
+            String pathFile = "src/main/resources/static/BookCovers/" + seriesName +"/" + volumeName;
             ImageDownloader.downloadImageCovers(doc, seriesName, volumeName, imageURL);
-//            Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate);
-//            bookCollection.add(book);
+            Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate, pathFile);
+            bookCollection.add(book);
         }
     }
 
-    public static Set<Book> getBooks() throws IOException{
+    public static List<Book> getBooks() throws IOException{
         getAllLinks();
-        for(String url : links){
-            seriesScrape(url);
+        for(int i = 0; i < 10; i++){
+            seriesScrape(links.get(i));
         }
+//        for(String url : links){
+//
+//        }
         return bookCollection;
     }
     public static void main(String[] args) throws IOException {

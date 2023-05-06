@@ -3,7 +3,9 @@ package com.example.releases.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -11,6 +13,8 @@ import java.util.Calendar;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,7 +36,7 @@ public class Book {
     private LocalDate releaseDate;
     private String imagePath;
 
-    public Book(String name, String series, Type type, String author, String artist, double price, String ISBN, LocalDate releaseDate) {
+    public Book(String name, String series, Type type, String author, String artist, double price, String ISBN, LocalDate releaseDate, String imagePath) {
         this.name = name;
         this.series = series;
         this.type = type;
@@ -41,5 +45,6 @@ public class Book {
         this.price = price;
         this.ISBN = ISBN;
         this.releaseDate = releaseDate;
+        this.imagePath = imagePath;
     }
 }
