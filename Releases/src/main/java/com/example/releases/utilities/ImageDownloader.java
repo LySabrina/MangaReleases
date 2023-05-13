@@ -24,13 +24,17 @@ public class ImageDownloader {
             Elements seriesVolume = doc.select(".series-volume");
 
             //Making a directory with the series name
-            File parentDir = new File("Releases/src/main/resources/static/BookCovers/");
+            File parentDir = new File("src/main/resources/static/BookCovers/");
+
             System.out.println(System.getProperty("user.dir"));
             File childDir = new File(parentDir, seriesName);
+
+
+            //If the childDir does not exist
             if(!childDir.exists()){
                 boolean created = childDir.mkdir(); //if the directory failed to be created throw an exception
                 if(!created){
-                    throw new IOException();
+                    throw new Exception();
                 }
             }
             File f = new File(childDir, volumeName + ".jpg");

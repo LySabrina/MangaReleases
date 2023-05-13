@@ -1,14 +1,36 @@
 .filter-container{
-    
+    margin:20px;
+}
+
+.filter-container > *{
+    margin:auto;
+}
+
+.content-container{
+    display:flex;
+
 }
 
 .table{
     display: flex;
     flex-wrap: wrap;   
+
 }
 
-.table-container{
-    display:flex;
+.sidebar-container{
+    margin :10px;
+    background-color: green;
+    padding:10px;
+
+}
+
+.link{
+    text-decoration: none;
+    color:white;
+    flex-basis: 0;
+    flex: 1 1 0px;
     
 }
-
+.flex-item{
+    
+}

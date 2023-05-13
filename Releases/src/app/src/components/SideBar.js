@@ -1,22 +1,54 @@
-import React from 'react'
+import "../style/Home.css";
+import "../style/Sidebar.css";
+import React, { useState, useEffect } from "react";
 
-export default function SideBar() {
+export default function SideBar({ formats, genres }) {
+  const [formatFilters, setFormatFilters ] = [];
+  const [genresFilters, setGenresFilters] = [];
+  
+  //make sure it the query is submitted to the database
+  function handleFormChange(e){
+    console.log("CHANGED");
+  }
+
   return (
     <div id="sideBar">
-        <div>
-            <h3>Format</h3>
-            <ul class = 'format'>
-                <li>Manga</li>
-                <li>Light Novel</li>
-            </ul>
 
-            <h3>Genre</h3>
-            <ul class = 'genre'>
-                <li>Fantasy</li>
-                <li>Action</li>
-                <li>Romance</li>
-            </ul>
+
+
+      
+      <form className="filter" onChange={handleFormChange}>
+        <div>
+          <h3>Format</h3>
+          {formats.map((element) => (
+            <div className="format-list">
+              <input
+                type="checkbox"
+                name={element}
+                className="format"
+                id={element}
+              />
+              <label for={element}>{element}</label>
+            </div>
+          ))}
+
+          <h3>Genres</h3>
+          <div className="genres-list">
+            {genres.map((element) => (
+              <div className="genres-list">
+                <input
+                  type="checkbox"
+                  name={element}
+                  className="genre"
+                  id={element}
+                />
+                <label for={element}>{element}</label>
+              </div>
+            ))}
+          </div>
         </div>
+      </form>
+
     </div>
-  )
+  );
 }

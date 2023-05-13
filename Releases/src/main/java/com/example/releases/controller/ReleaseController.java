@@ -1,7 +1,9 @@
 package com.example.releases.controller;
 
 import com.example.releases.model.Book;
+import com.example.releases.model.Type;
 import com.example.releases.respository.BookRepository;
+import com.example.releases.respository.GenresRepository;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class ReleaseController {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private GenresRepository genresRepository;
 
     //by default, get all the books and display it
 
@@ -40,11 +44,25 @@ public class ReleaseController {
        return (List<Book>) bookRepository.findAll();
     }
 
-    @GetMapping("/BookDetails/{id}")
-    public Book getBookById(@PathVariable Long id){
-        Optional<Book> bookResponse = bookRepository.findById(id);
-        Book book = bookResponse.get();
-        return book;
+//    //No need for the API endpoint because it's better for the client-side to do the routing
+//    //At initial launch ("/"), we sent the front-end application ALL the BOOK DATA hence it's holding the data already
+//     There's no need for it to make another HTTP REQUEST (which takes time) to get data when it already have it
+//    @GetMapping("/BookDetails/{id}")
+//    public Book getBookById(@PathVariable Long id){
+//        Optional<Book> bookResponse = bookRepository.findById(id);
+//        Book book = bookResponse.get();
+//        return book;
+//    }
+
+    @GetMapping("/genres")
+    public List<String> getAllGenres(){
+        List<String> allGenres = genresRepository.getAllGenresName();
+        return  allGenres;
+    }
+
+    @GetMapping("/formats")
+    public Type[] getAllFormats(){
+        return Type.values();
     }
 
     @GetMapping("{id}/image")
@@ -59,4 +77,10 @@ public class ReleaseController {
         String encodedFile = Base64.getEncoder().encodeToString(imageContents);
          return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(encodedFile);
     }
+
+    @GetMapping("/date")
+    public List<Book> getBooksByDate(@RequestParam int year, @RequestParam String month){
+        return bookRepository.getBooksByDate(year, month);
+    }
+
 }

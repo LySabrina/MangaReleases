@@ -1,6 +1,8 @@
 package com.example.releases.model;
 
 import com.example.releases.respository.BookRepository;
+import com.example.releases.respository.GenresRepository;
+import com.example.releases.services.GenresService;
 import com.example.releases.services.SevenSeaScraper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,15 +18,24 @@ public class DBInit implements CommandLineRunner {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private GenresRepository genresRepository;
 
+    @Autowired
+    private GenresService service;
     @Override
     public void run(String... args) throws Exception {
         bookRepository.deleteAll();
+        genresRepository.deleteAll();
         List<Book> bookCollection = SevenSeaScraper.getBooks();
+        Set<Genres> genresCollection = SevenSeaScraper.getGenres();
         if(!(bookCollection == null)){
-            for(Book b: bookCollection){
-                bookRepository.save(b);
+            bookRepository.saveAll(bookCollection);
+            for(Genres g : genresCollection){
+                System.out.println(g.getName());    //error, it gives a constraint error when attempting to add a duplicated value
+                service.saveGenre(g.getName());
             }
+//            genresRepository.saveAll(genresCollection);
             System.out.println(":: DB INIT SUCCESSFUL");
         }
         else{

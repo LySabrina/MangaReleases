@@ -1,9 +1,8 @@
 package com.example.releases.services;
 
-import com.beust.ah.A;
 import com.example.releases.model.Book;
+import com.example.releases.model.Genres;
 import com.example.releases.model.Type;
-import com.example.releases.respository.BookRepository;
 import com.example.releases.utilities.ImageDownloader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -21,20 +20,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * TODO: From the information gathered, create a Book object then make sure it is put into the database
+ * NOTES
+ * DBInit has a BookRepository which takes all the books and places them inside the DB
+ */
+
+/**
+ * TODO LIST:
+ * 1) FIX: Author and Artist separation
+ *
+ * TODO FUTURE UPDATES:
+ * 1) Possibly check if book series info is updated (ex. upcoming release of new book)
  */
 
 /**
  * Scrapes book information from SevenSeas websites.
- * TODO FUTURE UPDATES: Possibly check if book series info is updated (ex. upcoming release of new book)
  */
 public class SevenSeaScraper {
     private static List<Book> bookCollection = new ArrayList<>();
     private static ArrayList<String> links = new ArrayList<>();
+    private static Set<Genres> genresCollection = new TreeSet<>();            //get all the genres specified
     private int PAGES_LIMIT = 10;
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
     private static Map<String, String> HTTP_HEADERS = new HashMap<>(){{put("Accept-Language", "*");put("Referer", "https://sevenseasentertainment.com/series-list/");}};
     private static String BASE_URL = "https://sevenseasentertainment.com/series-list/";
+
 
     /**
      * Gets all the links of books information
@@ -67,7 +76,7 @@ public class SevenSeaScraper {
         }
         Element copyRight = bookContainer.getElementById("copyright");
         Elements bookInfo = copyRight.nextElementSiblings().select("a");
-        List<String> genres = new ArrayList<>();
+//        List<String> genres = new ArrayList<>();
         List<String> authors = new ArrayList<>();
 
         for(Element a : bookInfo){
@@ -77,13 +86,17 @@ public class SevenSeaScraper {
             String type = href.substring(start, end);
 
             if(type.equals("tag")){
-                genres.add(a.text());
+                Genres g = new Genres(a.text());
+                genresCollection.add(g);
+//                genres.add(a.text());
             }
             else{
                 authors.add(a.text());
             }
         }
 
+
+        //Now create a Genres object such that it can be added to the database
         // <!------- GETS ALL THE VOLUMES NAME IN THE SERIES, RELEASE DATE, PRICE, FORMAT ------->
         Elements volumes = doc.select(".series-volume");
         for(Element volume : volumes){
@@ -129,19 +142,15 @@ public class SevenSeaScraper {
 
     public static List<Book> getBooks() throws IOException{
         getAllLinks();
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 2; i++){
             seriesScrape(links.get(i));
         }
-//        for(String url : links){
-//
-//        }
         return bookCollection;
     }
-    public static void main(String[] args) throws IOException {
-        getAllLinks();
-        for(String url : links){
-            seriesScrape(url);
-        }
+
+    public static Set<Genres> getGenres(){
+        System.out.println(genresCollection.toString());
+        return genresCollection;
     }
 }
 
