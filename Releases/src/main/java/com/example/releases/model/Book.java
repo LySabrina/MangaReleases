@@ -2,19 +2,15 @@ package com.example.releases.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Getter
-@Setter
+@Data
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,6 +32,15 @@ public class Book {
     private LocalDate releaseDate;
     private String imagePath;
 
+
+    @ManyToMany
+    @JoinTable(name="books_genres",
+               joinColumns = @JoinColumn(name = "book_id"),
+               inverseJoinColumns = @JoinColumn(name = "genres.id")
+                )
+    private List<Genres> genres = new ArrayList<>();
+
+
     public Book(String name, String series, Type type, String author, String artist, double price, String ISBN, LocalDate releaseDate, String imagePath) {
         this.name = name;
         this.series = series;
@@ -47,4 +52,5 @@ public class Book {
         this.releaseDate = releaseDate;
         this.imagePath = imagePath;
     }
+
 }

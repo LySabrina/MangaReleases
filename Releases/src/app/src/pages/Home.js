@@ -21,8 +21,17 @@ export default function Home() {
   const [genres, setGenres] = useState([]);
 
   //At initial mount, get all the books,genres, and formats from the database
-  useEffect(()=>{
+
+  function filterCallback(data){
+    setBooks(data);
     
+  }
+
+  function sidebarCallback(data){
+    
+  }
+
+  useEffect(()=>{
     const promiseBooks = axios.get("http://localhost:8080/");
     const promiseFormats = axios.get('http://localhost:8080/formats');
     const promiseGenres = axios.get('http://localhost:8080/genres');
@@ -64,7 +73,7 @@ export default function Home() {
     <div>
         <Navbar/>
         <div class = 'filter-container'>
-          <Filter className = 'filters'/>
+          <Filter className = 'filters' filterCallback={filterCallback}/>
         </div>
 
         <div class = 'content-container'>

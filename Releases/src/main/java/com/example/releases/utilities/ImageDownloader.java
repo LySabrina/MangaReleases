@@ -25,8 +25,6 @@ public class ImageDownloader {
 
             //Making a directory with the series name
             File parentDir = new File("src/main/resources/static/BookCovers/");
-
-            System.out.println(System.getProperty("user.dir"));
             File childDir = new File(parentDir, seriesName);
 
 

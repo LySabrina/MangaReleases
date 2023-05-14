@@ -1,25 +1,27 @@
 package com.example.releases.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
+import lombok.*;
+import org.checkerframework.checker.units.qual.C;
+
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
-
 public class Genres implements Comparable<Genres>{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true)
-
     private String name;
+
+    @ManyToMany(mappedBy = "genres")
+    private Set<Book> books = new HashSet<>();
 
     public Genres(String name){
         this.name = name;

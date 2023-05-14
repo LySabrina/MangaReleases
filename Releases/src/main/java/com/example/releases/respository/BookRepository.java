@@ -17,4 +17,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "Select * from Book where YEAR(release_date) = :year AND MONTHNAME(release_date) = :month", nativeQuery = true)
     public List<Book> getBooksByDate(@Param("year") int year, @Param("month") String month);
 
+    @Query(value = "SELECT * from Book WHERE YEAR(release_date) = :year AND MONTHNAME(release_date) = :month AND type IN :formats", nativeQuery = true)
+    public List<Book> getBookByDateGenre(@Param("year") int year, @Param("month") String month,
+                                         @Param("formats") String[] formats);
+
+    @Query(value = "SELECT * FROM BOOK WHERE type IN :formats ", nativeQuery = true)
+    public List<Book> findBooksMatchingFormat  (@Param("formats") String[] formats);
 }

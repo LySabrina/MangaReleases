@@ -3,12 +3,16 @@ package com.example.releases.services;
 import com.example.releases.model.Book;
 import com.example.releases.model.Genres;
 import com.example.releases.model.Type;
+import com.example.releases.respository.GenresRepository;
 import com.example.releases.utilities.ImageDownloader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +39,10 @@ import java.util.concurrent.Executors;
 /**
  * Scrapes book information from SevenSeas websites.
  */
+
+
 public class SevenSeaScraper {
+    private static HashMap<Book, List<Genres>> bookListHashMap = new HashMap<>();
     private static List<Book> bookCollection = new ArrayList<>();
     private static ArrayList<String> links = new ArrayList<>();
     private static Set<Genres> genresCollection = new TreeSet<>();            //get all the genres specified
@@ -65,89 +72,110 @@ public class SevenSeaScraper {
      * @param url
      * @throws IOException
      */
-    public static void seriesScrape(String url) throws IOException {
-        // <!-------- GETS THE AUTHOR AND GENRES AND SERIES NAME  -------->
-        Document doc = Jsoup.connect(url).userAgent(USER_AGENT).headers(HTTP_HEADERS).get();
-        Element bookContainer = doc.getElementById("series-meta");
-        String seriesName = doc.selectFirst(".topper").ownText().substring(7);
-        if(seriesName.contains("(")){
-            int index = seriesName.indexOf("(");
-            seriesName = seriesName.substring(0, index);
+    public static void seriesScrape(String url) {
+        try{
+
+            // <!-------- GETS THE AUTHOR AND GENRES AND SERIES NAME  -------->
+            Document doc = Jsoup.connect(url).userAgent(USER_AGENT).headers(HTTP_HEADERS).get();
+            Element bookContainer = doc.getElementById("series-meta");
+            String seriesName = doc.selectFirst(".topper").ownText().substring(7);
+            if(seriesName.contains("(")){
+                int index = seriesName.indexOf("(");
+                seriesName = seriesName.substring(0, index);
+            }
+            Element copyRight = bookContainer.getElementById("copyright");
+            Elements bookInfo = copyRight.nextElementSiblings().select("a");
+
+//        List<Genres> genres = new ArrayList<>();
+            List<Genres> genres = new ArrayList<>();
+            List<String> authors = new ArrayList<>();
+
+            for(Element a : bookInfo){
+                String href = a.attr("href");
+                int start = href.indexOf(".com/") + 5;
+                int end = href.indexOf("/", start);
+                String type = href.substring(start, end);
+
+                if(type.equals("tag")){
+                    //Adding genre to the global set
+                    Genres g = new Genres(a.text());
+                    genresCollection.add(g);
+                    genres.add(g);
+                }
+                else{
+                    authors.add(a.text());
+                }
+            }
+
+
+            //Now create a Genres object such that it can be added to the database
+            // <!------- GETS ALL THE VOLUMES NAME IN THE SERIES, RELEASE DATE, PRICE, FORMAT ------->
+            Elements volumes = doc.select(".series-volume");
+            for(Element volume : volumes){
+
+                String volumeName = volume.selectFirst("h3").child(1).ownText();
+                Element image = volume.child(0).child(0);
+                String imageURL = image.attr("src");
+                //volume.ownText().substring(2) ==> because it has ":  " as some start and need to get rid of it
+                //VolumeInfo contains info such as price, format, ISBN, releaseDate
+                List<String> dirtyVolumeInfo = Arrays.asList(volume.ownText().substring(2).split(" "));
+                ArrayList<String> volumeInfo = new ArrayList<>(dirtyVolumeInfo);
+                if(volumeInfo.contains("Light")){
+                    volumeInfo.remove("Light");
+                }
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+                LocalDate releaseDate = LocalDate.parse(volumeInfo.get(0), dateFormatter);
+                double price;
+                String format;
+                String ISBN;
+
+                //light novel is having issue with spacing
+                System.out.println("VOLUME : " + volumeName);
+                for(int i =0 ;i < volumeInfo.size(); i++){
+                    System.out.print("INDEX " + i +": " +volumeInfo.get(i) + " ");
+                }
+                System.out.println();
+                if(volumeInfo.size() > 4){
+                    price = Double.parseDouble(volumeInfo.get(2).substring(1));
+                    format = volumeInfo.get(3).toUpperCase();
+                    ISBN = volumeInfo.get(4);
+                }
+                else{
+                    price = Double.parseDouble(volumeInfo.get(1).substring(1));
+                    format = volumeInfo.get(2).toUpperCase();
+                    ISBN = volumeInfo.get(3);
+                }
+                String pathFile = "src/main/resources/static/BookCovers/" + seriesName +"/" + volumeName;
+                ImageDownloader.downloadImageCovers(doc, seriesName, volumeName, imageURL);
+                Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate, pathFile);
+
+                bookListHashMap.put(book, genres);
+                bookCollection.add(book);
+            }
         }
-        Element copyRight = bookContainer.getElementById("copyright");
-        Elements bookInfo = copyRight.nextElementSiblings().select("a");
-//        List<String> genres = new ArrayList<>();
-        List<String> authors = new ArrayList<>();
+        catch (Exception e){
+            e.printStackTrace();
 
-        for(Element a : bookInfo){
-            String href = a.attr("href");
-            int start = href.indexOf(".com/") + 5;
-            int end = href.indexOf("/", start);
-            String type = href.substring(start, end);
-
-            if(type.equals("tag")){
-                Genres g = new Genres(a.text());
-                genresCollection.add(g);
-//                genres.add(a.text());
-            }
-            else{
-                authors.add(a.text());
-            }
         }
 
-
-        //Now create a Genres object such that it can be added to the database
-        // <!------- GETS ALL THE VOLUMES NAME IN THE SERIES, RELEASE DATE, PRICE, FORMAT ------->
-        Elements volumes = doc.select(".series-volume");
-        for(Element volume : volumes){
-
-            String volumeName = volume.selectFirst("h3").child(1).ownText();
-            Element image = volume.child(0).child(0);
-            String imageURL = image.attr("src");
-            //volume.ownText().substring(2) ==> because it has ":  " as some start and need to get rid of it
-            //VolumeInfo contains info such as price, format, ISBN, releaseDate
-            List<String> dirtyVolumeInfo = Arrays.asList(volume.ownText().substring(2).split(" "));
-            ArrayList<String> volumeInfo = new ArrayList<>(dirtyVolumeInfo);
-            if(volumeInfo.contains("Light")){
-                volumeInfo.remove("Light");
-            }
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-            LocalDate releaseDate = LocalDate.parse(volumeInfo.get(0), dateFormatter);
-            double price;
-            String format;
-            String ISBN;
-
-            //light novel is having issue with spacing
-            System.out.println("VOLUME : " + volumeName);
-            for(int i =0 ;i < volumeInfo.size(); i++){
-                System.out.print("INDEX " + i +": " +volumeInfo.get(i) + " ");
-            }
-            System.out.println();
-            if(volumeInfo.size() > 4){
-                price = Double.parseDouble(volumeInfo.get(2).substring(1));
-                format = volumeInfo.get(3).toUpperCase();
-                ISBN = volumeInfo.get(4);
-            }
-            else{
-                price = Double.parseDouble(volumeInfo.get(1).substring(1));
-                format = volumeInfo.get(2).toUpperCase();
-                ISBN = volumeInfo.get(3);
-            }
-            String pathFile = "src/main/resources/static/BookCovers/" + seriesName +"/" + volumeName;
-            ImageDownloader.downloadImageCovers(doc, seriesName, volumeName, imageURL);
-            Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate, pathFile);
-            bookCollection.add(book);
-        }
     }
 
     public static List<Book> getBooks() throws IOException{
         getAllLinks();
-        for(int i = 0; i < 2; i++){
+
+        for(int i = 0; i < 10; i++){
             seriesScrape(links.get(i));
         }
         return bookCollection;
     }
 
+    public static HashMap<Book, List<Genres>> getHashBooks() throws IOException{
+        getAllLinks();      //726 LINKS
+        for(int i = 0; i < 50; i++){
+            seriesScrape(links.get(i));
+        }
+        return bookListHashMap;
+    }
     public static Set<Genres> getGenres(){
         System.out.println(genresCollection.toString());
         return genresCollection;

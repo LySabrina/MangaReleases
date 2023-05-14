@@ -83,4 +83,14 @@ public class ReleaseController {
         return bookRepository.getBooksByDate(year, month);
     }
 
+    @GetMapping("/dateGenre")
+    public List<Book> getBooksByDateGenre(@RequestParam int year, @RequestParam String month, @RequestParam String[] formats){
+        return bookRepository.getBookByDateGenre(year, month, formats);
+    }
+
+    @GetMapping("/getFormats")
+    public List<Book> findBooksMatchingFormat(@RequestParam String[] formats){
+        return bookRepository.findBooksMatchingFormat(formats);
+    }
+
 }

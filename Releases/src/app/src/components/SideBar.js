@@ -14,8 +14,6 @@ export default function SideBar({ formats, genres }) {
   return (
     <div id="sideBar">
 
-
-
       
       <form className="filter" onChange={handleFormChange}>
         <div>
@@ -27,6 +25,7 @@ export default function SideBar({ formats, genres }) {
                 name={element}
                 className="format"
                 id={element}
+                
               />
               <label for={element}>{element}</label>
             </div>
@@ -41,6 +40,7 @@ export default function SideBar({ formats, genres }) {
                   name={element}
                   className="genre"
                   id={element}
+                  
                 />
                 <label for={element}>{element}</label>
               </div>

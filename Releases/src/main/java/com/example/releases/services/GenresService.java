@@ -2,6 +2,7 @@ package com.example.releases.services;
 
 import com.example.releases.model.Genres;
 import com.example.releases.respository.GenresRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
