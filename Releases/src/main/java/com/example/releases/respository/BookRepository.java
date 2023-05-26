@@ -23,4 +23,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query(value = "SELECT * FROM BOOK WHERE type IN :formats ", nativeQuery = true)
     public List<Book> findBooksMatchingFormat  (@Param("formats") String[] formats);
+
+
+    //gets all the genres associated with the book
+    @Query(value = "SELECT genres.name from books_genres JOIN genres on genres_id = id where book_id = :bookId ", nativeQuery = true)
+    public List<String> getBookGenres(@Param("bookId") Long bookId);
+
+    @Query(value = "Select * from book where name = :bookName", nativeQuery = true)
+    public Book getBookByName(@Param("bookName") String bookName);
 }

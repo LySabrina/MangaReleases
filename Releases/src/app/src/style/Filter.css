@@ -1,3 +1,11 @@
 #filter{
     margin:auto;
 }
+
+#filter-container{
+    display: flex;
+}
+#filter-container > *{
+    margin: 0 auto;
+}
+

@@ -1,6 +1,7 @@
 package com.example.releases.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,7 @@ public class Book {
 
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name="books_genres",
                joinColumns = @JoinColumn(name = "book_id"),
                inverseJoinColumns = @JoinColumn(name = "genres.id")
@@ -51,6 +53,17 @@ public class Book {
         this.ISBN = ISBN;
         this.releaseDate = releaseDate;
         this.imagePath = imagePath;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        Book b  = (Book)o;
+        if(this.name.equals(b.getName())){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 }

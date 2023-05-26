@@ -3,19 +3,33 @@ import "../style/Sidebar.css";
 import React, { useState, useEffect } from "react";
 
 export default function SideBar({ formats, genres }) {
-  const [formatFilters, setFormatFilters ] = [];
-  const [genresFilters, setGenresFilters] = [];
+  const [formatFilters, setFormatFilters ] = useState([]);
+  const [genresFilters, setGenresFilters] = useState([]);
   
   //make sure it the query is submitted to the database
   function handleFormChange(e){
-    console.log("CHANGED");
+    console.log(e);
+    const genreName = e.target.value;
+    const isChecked = e.target.checked;
+    if(isChecked){
+      setGenresFilters([...genresFilters, genreName]);
+    }
+    else if(!isChecked){
+      const genreIndex = genresFilters.indexOf(genreName);
+      if(genreIndex !== -1){
+        genresFilters.splice(genreIndex, 1);
+      }
+    }
   }
+  useEffect(()=>{
+    console.log(genresFilters)
+  }, [genresFilters]);
 
   return (
     <div id="sideBar">
 
       
-      <form className="filter" onChange={handleFormChange}>
+      <form className="filter" >
         <div>
           <h3>Format</h3>
           {formats.map((element) => (
@@ -37,10 +51,10 @@ export default function SideBar({ formats, genres }) {
               <div className="genres-list">
                 <input
                   type="checkbox"
-                  name={element}
+                  value = {element}
                   className="genre"
                   id={element}
-                  
+                  onChange={handleFormChange}
                 />
                 <label for={element}>{element}</label>
               </div>

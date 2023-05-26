@@ -11,18 +11,18 @@ import {
   Route,
   useParams,
 } from "react-router-dom";
-import BookDetail from "./pages/BookDetails";
 import BookDetails from "./pages/BookDetails";
 function App() {
   return (
     <div className="App">
+      
       <Router>
         
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path = "/login" element={<Login/>}/>
-          <Route path = "/BookDetail:id" element = {<BookDetails/>} />
+          <Route path ="/BookDetails/:id" element = {<BookDetails/>} />
         </Routes>
       </Router>
     </div>

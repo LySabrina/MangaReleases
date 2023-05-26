@@ -93,4 +93,10 @@ public class ReleaseController {
         return bookRepository.findBooksMatchingFormat(formats);
     }
 
+    @GetMapping("{id}/genres")
+    public List<String> getBookGenresk(@PathVariable Long id){
+        return bookRepository.getBookGenres(id);
+    }
+
+
 }

@@ -28,8 +28,9 @@ export default function Home() {
   }
 
   function sidebarCallback(data){
-    
+
   }
+
 
   useEffect(()=>{
     const promiseBooks = axios.get("http://localhost:8080/");
@@ -48,6 +49,8 @@ export default function Home() {
     });
 
   },[]);
+
+
 
   // useEffect(()=>{
   //     axios.get("http://localhost:8080/").then(response=>{
@@ -68,6 +71,31 @@ export default function Home() {
   //     })
   // }, []);
 
+  function rotateCard(e){
+    console.log(e);
+    //X and Y coordinates of the mouse position
+    const x = e.clientX;
+    const y = e.clientY;
+    const card = e.target;
+
+    //width and height of the cards
+    const width = card.offsetWidth;
+    const height = card.offsetHeight; 
+    console.log("WIDTH: " + width + " HEIGHT: " + height );
+    
+    const offsetX = (((x - width)) / width ) * 15;
+    const offsetY = (((y - height)) / height ) * 15;
+
+    console.log(offsetX, offsetY);
+    card.style.setProperty("--rotateX", -1 * offsetY + "deg");
+    card.style.setProperty("--rotateY", offsetX + "deg");
+    
+    //find the middle of the card 
+    //get the coordinates of the mouse and find the difference between the midle and the mouse coordinates //get the value and use it to transform the card
+
+
+    
+  }
   
   return (
     <div>
@@ -87,10 +115,9 @@ export default function Home() {
             {
               loading ? <LoadingSpinner/> : 
               books.map((element, index)=>(
-                <Link to = {`/BookDetails/${element.id}`} state={element}className='link'>
-                  <Book name = {element.name} releaseDate={element.releaseDate} id={element.id} key={index} class = 'flex-items'></Book>
+                <Link to = {`/BookDetails/${element.id}`} state={element} className='link' onMouseMove={rotateCard}>
+                  <Book name = {element.name} releaseDate={element.releaseDate} id={element.id} key={index}  className = 'flex-items'></Book>
                 </Link>
-                
               ))
             }
               

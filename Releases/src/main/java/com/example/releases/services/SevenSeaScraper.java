@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 
 /**
  * TODO LIST:
- * 1) FIX: Author and Artist separation
+ * 1) FIX: HASH MAP IS NOT SAVING ALL THE BOOKS
  *
  * TODO FUTURE UPDATES:
  * 1) Possibly check if book series info is updated (ex. upcoming release of new book)
@@ -43,6 +43,7 @@ import java.util.concurrent.Executors;
 
 public class SevenSeaScraper {
     private static HashMap<Book, List<Genres>> bookListHashMap = new HashMap<>();
+    private static int BOOK_AGGREGATED = 0;
     private static List<Book> bookCollection = new ArrayList<>();
     private static ArrayList<String> links = new ArrayList<>();
     private static Set<Genres> genresCollection = new TreeSet<>();            //get all the genres specified
@@ -107,10 +108,14 @@ public class SevenSeaScraper {
                 }
             }
 
+            if(authors.size() == 1){
+                authors.add(authors.get(0));
+            }
 
             //Now create a Genres object such that it can be added to the database
             // <!------- GETS ALL THE VOLUMES NAME IN THE SERIES, RELEASE DATE, PRICE, FORMAT ------->
             Elements volumes = doc.select(".series-volume");
+            BOOK_AGGREGATED += volumes.size();
             for(Element volume : volumes){
 
                 String volumeName = volume.selectFirst("h3").child(1).ownText();
@@ -147,8 +152,7 @@ public class SevenSeaScraper {
                 }
                 String pathFile = "src/main/resources/static/BookCovers/" + seriesName +"/" + volumeName;
                 ImageDownloader.downloadImageCovers(doc, seriesName, volumeName, imageURL);
-                Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(0), price, ISBN, releaseDate, pathFile);
-
+                Book book = new Book(volumeName, seriesName, Type.valueOf(format), authors.get(0), authors.get(1), price, ISBN, releaseDate, pathFile);
                 bookListHashMap.put(book, genres);
                 bookCollection.add(book);
             }
@@ -171,10 +175,18 @@ public class SevenSeaScraper {
 
     public static HashMap<Book, List<Genres>> getHashBooks() throws IOException{
         getAllLinks();      //726 LINKS
-        for(int i = 0; i < 50; i++){
+        for(int i = 0; i < 30; i++){
             seriesScrape(links.get(i));
         }
+        for(Book b : bookListHashMap.keySet()){
+            String key = b.toString();
+            String value = bookListHashMap.get(b).toString();
+            System.out.println(key);
+        }
+        System.out.println("HASH MAP SIZE: " + bookListHashMap.size());
+        System.out.println("BOOKS AGGREGATED: " + BOOK_AGGREGATED);
         return bookListHashMap;
+
     }
     public static Set<Genres> getGenres(){
         System.out.println(genresCollection.toString());

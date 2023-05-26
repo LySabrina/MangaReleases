@@ -14,7 +14,6 @@ export default function Book({name, releaseDate, id}) {
         console.log("NO IMAGE AVAILABLE");
       }
       else{
-        console.log('SUCCESSFULLY RECEIVED IMAGE');
         setImageSrc(response.data);
       }
 
@@ -30,8 +29,8 @@ export default function Book({name, releaseDate, id}) {
         </div>
 
         <div class="book-info">
-          <h3>{name}</h3>
-          <h5>Release Date: {releaseDate}</h5>
+          <h3 className = "title">{name}</h3>
+          <h5 className = "releaseDate">Release Date: {releaseDate}</h5>
         </div>
       </div>
     
