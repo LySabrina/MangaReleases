@@ -73,8 +73,8 @@ export default function Filter({ filterCallback }) {
             onChange={(selectedMonth) => setMonth(selectedMonth.target.value)}
           >
             <option selected>-</option>
-            {MONTHS.map((element) => (
-              <option value={element}>{element}</option>
+            {MONTHS.map((element, index) => (
+              <option value={element} key = {index}>{element}</option>
             ))}
           </select>
         </form>

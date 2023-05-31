@@ -32,22 +32,22 @@ export default function SideBar({ formats, genres }) {
       <form className="filter" >
         <div>
           <h3>Format</h3>
-          {formats.map((element) => (
+          {formats.map((element, index) => (
             <div className="format-list">
               <input
                 type="checkbox"
                 name={element}
                 className="format"
                 id={element}
-                
+                key = {index}
               />
-              <label for={element}>{element}</label>
+              <label htmlFor={element}>{element}</label>
             </div>
           ))}
 
           <h3>Genres</h3>
           <div className="genres-list">
-            {genres.map((element) => (
+            {genres.map((element, index) => (
               <div className="genres-list">
                 <input
                   type="checkbox"

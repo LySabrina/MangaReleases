@@ -84,10 +84,12 @@ public class SevenSeaScraper {
                 int index = seriesName.indexOf("(");
                 seriesName = seriesName.substring(0, index);
             }
+            Element firstBreak = bookContainer.getElementsByTag("br").first();
             Element copyRight = bookContainer.getElementById("copyright");
-            Elements bookInfo = copyRight.nextElementSiblings().select("a");
 
-//        List<Genres> genres = new ArrayList<>();
+//            Elements bookInfo = copyRight.nextElementSiblings().select("a");
+            Elements bookInfo = firstBreak.nextElementSiblings().select("a");
+
             List<Genres> genres = new ArrayList<>();
             List<String> authors = new ArrayList<>();
 
