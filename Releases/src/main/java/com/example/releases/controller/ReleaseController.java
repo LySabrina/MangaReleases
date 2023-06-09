@@ -7,6 +7,7 @@ import com.example.releases.respository.GenresRepository;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +57,7 @@ public class ReleaseController {
 
     @GetMapping("/genres")
     public List<String> getAllGenres(){
+
         List<String> allGenres = genresRepository.getAllGenresName();
         return  allGenres;
     }
@@ -94,9 +96,30 @@ public class ReleaseController {
     }
 
     @GetMapping("{id}/genres")
-    public List<String> getBookGenresk(@PathVariable Long id){
+    public List<String> getBookGenres(@PathVariable Long id){
         return bookRepository.getBookGenres(id);
     }
 
 
+    //formats, genres
+    @GetMapping("/filters")
+    public List<Book> getFilteredBooks(@RequestParam(required = false) Integer year, @RequestParam(required = false) String month, @RequestParam(required = false) String[] formats, @RequestParam(required = false) String[] genres){
+        //now i need to know which of these are toggled
+          /*
+        - select only format for ALL books
+        - select only genres for ALL books
+        - select both format and genres for ALL books
+        - select format and date
+        - select genre and date
+        - select both format and genre and date
+     */
+        if(year == null && month == null && genres == null ){
+            //meaning format was only picked
+            return bookRepository.findBooksMatchingFormat(formats);
+        }
+        else if(year == null && month == null & formats == null){
+            return bookRepository.getBooksByGenres(genres);
+        }
+        return null;
+    }
 }

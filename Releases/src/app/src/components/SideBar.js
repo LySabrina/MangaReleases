@@ -2,13 +2,12 @@ import "../style/Home.css";
 import "../style/Sidebar.css";
 import React, { useState, useEffect } from "react";
 
-export default function SideBar({ formats, genres }) {
+export default function SideBar({ formats, genres, sidebarCallback }) {
   const [formatFilters, setFormatFilters ] = useState([]);
   const [genresFilters, setGenresFilters] = useState([]);
   
   //make sure it the query is submitted to the database
-  function handleFormChange(e){
-    console.log(e);
+  function handleGenresChange(e){
     const genreName = e.target.value;
     const isChecked = e.target.checked;
     if(isChecked){
@@ -20,15 +19,32 @@ export default function SideBar({ formats, genres }) {
         genresFilters.splice(genreIndex, 1);
       }
     }
+    sidebarCallback(formatFilters,genresFilters);
   }
-  useEffect(()=>{
-    console.log(genresFilters)
-  }, [genresFilters]);
+
+  function handleFormatsChange(e){
+    const formatName = e.target.value;
+    const isChecked = e.target.checked;
+    if(isChecked){
+      setFormatFilters([...formatFilters,formatName]);
+    }
+    else if(!isChecked){
+      const formatIndex = formatFilters.indexOf(formatName);
+      if(formatIndex!== -1){
+        formatFilters.splice(formatIndex,1);
+      }
+    }
+    sidebarCallback(formatFilters,genresFilters);
+  }
+
+  //Printing state purpose
+  // useEffect(()=>{
+  //   console.log(genresFilters);
+  //   console.log("FORMATS: " + formatFilters);
+  // }, [genresFilters, formatFilters]);
 
   return (
-    <div id="sideBar">
-
-      
+    <div id="sideBar" className = "p-2">
       <form className="filter" >
         <div>
           <h3>Format</h3>
@@ -37,11 +53,13 @@ export default function SideBar({ formats, genres }) {
               <input
                 type="checkbox"
                 name={element}
+                value={element}
                 className="format"
                 id={element}
                 key = {index}
+                onChange={(e)=>handleFormatsChange(e)}
               />
-              <label htmlFor={element}>{element}</label>
+              <label htmlFor={element} className="p-1">{element}</label>
             </div>
           ))}
 
@@ -54,9 +72,9 @@ export default function SideBar({ formats, genres }) {
                   value = {element}
                   className="genre"
                   id={element}
-                  onChange={handleFormChange}
+                  onChange={handleGenresChange}
                 />
-                <label for={element}>{element}</label>
+                <label htmlFor={element} className = "p-1">{element}</label>
               </div>
             ))}
           </div>

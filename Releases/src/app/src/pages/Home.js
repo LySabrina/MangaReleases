@@ -19,18 +19,32 @@ export default function Home() {
   const [books, setBooks] = useState([]);
   const [formats, setFormats] = useState([]);
   const [genres, setGenres] = useState([]);
+  const [year, setYear] = useState();
+  const [month, setMonth] = useState();
 
+
+  //Hold an array of requested formats and genres selected by user
+  const [requestedFormats, setRequestedFormats] = useState([]);
+  const [requestedGenres, setRequestedGenres] = useState([]);
+  
   //At initial mount, get all the books,genres, and formats from the database
 
-  function filterCallback(data){
-    setBooks(data);
+  function filterCallback(year, month){
+    // setBooks(data);
+    console.log(year, month);
+    setYear(year);
+    //do some check if month == "-"
+    //we can allow users to search manga in a given year
+    setMonth(month);
     
   }
 
-  function sidebarCallback(data){
-
+  function sidebarCallback(formats,genres){
+    setRequestedFormats(formats);
+    setRequestedGenres(genres);
   }
 
+  //Now i got the genresm, formats, and year and month. Combine them in someway such that i get books of thes
 
   useEffect(()=>{
     const promiseBooks = axios.get("http://localhost:8080/");
@@ -50,8 +64,14 @@ export default function Home() {
 
   },[]);
 
+  async function getFormats(){
+    
+  }
+  useEffect(()=>{ 
+    if(requestedFormats.length != 0){
 
-
+    }
+  },[requestedFormats,requestedGenres, year,month])
   // useEffect(()=>{
   //     axios.get("http://localhost:8080/").then(response=>{
   //       if(response.data == null){
@@ -102,12 +122,12 @@ export default function Home() {
         <Navbar/>
         <div class = 'filter-container'>
           <Filter className = 'filters' filterCallback={filterCallback}/>
+          
         </div>
 
         <div class = 'content-container'>
-          <div class='sidebar-container'>
-          <SideBar formats = {formats} genres = {genres}/>
-          </div>
+        <SideBar formats = {formats} genres = {genres} sidebarCallback={sidebarCallback}/>
+          
 
           <div class = 'table'>
             {hasError && <p>{errMessage}</p>}

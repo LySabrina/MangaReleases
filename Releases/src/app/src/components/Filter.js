@@ -38,18 +38,25 @@ export default function Filter({ filterCallback }) {
 
   //once the state has changed, we want to send that new query to the database
   //this needs to be fixed
-  useEffect(() => {
-    year !== "-" &&
-      month !== "-" &&
-      axios
-        .get(`http://localhost:8080/date?year=${year}&month=${month}`)
-        .then((response) => {
-          filterCallback(response.data);
-        })
-        .catch((error) => {
-          console.log("error");
-        });
-  }, [year, month]);
+
+  useEffect(()=>{
+    if(year !== undefined && year !== "-" && month !== undefined ){
+      filterCallback(year, month)
+    }
+  }, [year,month]);
+
+  // useEffect(() => {
+  //   year !== "-" &&
+  //     month !== "-" &&
+  //     axios
+  //       .get(`http://localhost:8080/date?year=${year}&month=${month}`)
+  //       .then((response) => {
+  //         filterCallback(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log("error");
+  //       });
+  // }, [year, month]);
 
   return (
     <div id="filter-container">
