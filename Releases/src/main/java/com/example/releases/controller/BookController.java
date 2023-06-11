@@ -1,6 +1,7 @@
 package com.example.releases.controller;
 
 import com.example.releases.dto.BookDTO;
+import com.example.releases.exceptions.BookNotFoundException;
 import com.example.releases.model.Book;
 import com.example.releases.model.Type;
 import com.example.releases.respository.BookRepository;
@@ -45,7 +46,6 @@ public class BookController {
     public List<BookDTO> getAllBooks(){
         return bookService.getAllBooks();
     }
-
 
 //    //No need for the API endpoint because it's better for the client-side to do the routing
 //    //At initial launch ("/"), we sent the front-end application ALL the BOOK DATA hence it's holding the data already

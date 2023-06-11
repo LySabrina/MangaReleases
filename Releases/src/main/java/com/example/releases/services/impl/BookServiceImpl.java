@@ -2,6 +2,7 @@ package com.example.releases.services.impl;
 
 import com.example.releases.dto.BookDTO;
 import com.example.releases.dto.mapper.BookMapper;
+import com.example.releases.exceptions.BookNotFoundException;
 import com.example.releases.model.Book;
 import com.example.releases.model.Type;
 import com.example.releases.respository.BookRepository;
@@ -33,14 +34,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> getAllBooks() {
         List<Book> allBooks = bookRepository.findAll();
-        //Easier way to do this instead of using a for-each loop, looks cleanier too
+        //Easier way to do this instead of using a for-each loop, looks cleaner too
         return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
-//        List<BookDTO> allBooksDTO = new ArrayList<>();
-//        for(Book b : allBooks){
-//            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-//            allBooksDTO.add(bookDTO);
-//        }
-//        return allBooksDTO;
     }
 
     @Override
@@ -86,7 +81,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ResponseEntity<String> getBookImage(Long id)  throws IOException{
-        Book book = bookRepository.getReferenceById(id);
+
+        Book book = bookRepository.findById(id).orElseThrow(()-> new BookNotFoundException("Book Image with ID is not found"));
         if(book == null){
             return ResponseEntity.notFound().build();
         }

@@ -75,7 +75,6 @@ public class SevenSeaScraper {
      */
     public static void seriesScrape(String url) {
         try{
-
             // <!-------- GETS THE AUTHOR AND GENRES AND SERIES NAME  -------->
             Document doc = Jsoup.connect(url).userAgent(USER_AGENT).headers(HTTP_HEADERS).get();
             Element bookContainer = doc.getElementById("series-meta");
