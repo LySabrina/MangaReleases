@@ -75,7 +75,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDTO> getFilteredBooks(Integer year, String month, String[] formats, String[] genres) {
-
         List<BookDTO> allBooksDTO = new ArrayList<>();
         if(year == null && month == null && genres == null ){
             //meaning format was only picked
