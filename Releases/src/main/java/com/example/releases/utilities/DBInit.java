@@ -1,9 +1,11 @@
-package com.example.releases.model;
+package com.example.releases.utilities;
 
+import com.example.releases.model.Book;
+import com.example.releases.model.Genres;
 import com.example.releases.respository.BookRepository;
 import com.example.releases.respository.GenresRepository;
-import com.example.releases.services.GenresService;
-import com.example.releases.services.SevenSeaScraper;
+import com.example.releases.utilities.GenresService;
+import com.example.releases.utilities.SevenSeaScraper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

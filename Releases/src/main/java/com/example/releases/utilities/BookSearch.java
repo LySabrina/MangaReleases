@@ -1,4 +1,4 @@
-package com.example.releases.services;
+package com.example.releases.utilities;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;

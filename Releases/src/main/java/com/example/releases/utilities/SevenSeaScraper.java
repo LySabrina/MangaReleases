@@ -1,4 +1,4 @@
-package com.example.releases.services;
+package com.example.releases.utilities;
 
 import com.example.releases.model.Book;
 import com.example.releases.model.Genres;

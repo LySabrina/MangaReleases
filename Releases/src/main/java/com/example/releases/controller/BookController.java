@@ -1,34 +1,27 @@
 package com.example.releases.controller;
 
+import com.example.releases.dto.BookDTO;
 import com.example.releases.model.Book;
 import com.example.releases.model.Type;
 import com.example.releases.respository.BookRepository;
 import com.example.releases.respository.GenresRepository;
+import com.example.releases.services.BookService;
 import org.apache.commons.io.FileUtils;
-import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
-
 
 
 //@RestController tells SpringBoot to convert Java Object to JSON (ex. Book is converted to JSON format when you getBookByID)
-@RestController
+@RestController //Spring will automatically convert your return object into a ResponseEntity with all the status code and default headers
 @CrossOrigin(origins = "http://localhost:3000")
-public class ReleaseController {
+public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
@@ -36,14 +29,18 @@ public class ReleaseController {
     @Autowired
     private GenresRepository genresRepository;
 
-    //by default, get all the books and display it
+    @Autowired
+    private BookService bookService;
 
     @GetMapping("/")
-    public List<Book> getAllBooks(){
+    public List<BookDTO> getAllBooks(){
         //let us get all the books from the database. Look at each of its imagePath
         //From the imagePath
-       return (List<Book>) bookRepository.findAll();
+//       return (List<Book>) bookRepository.findAll();
+        return bookService.getAllBooks();
     }
+
+
 
 //    //No need for the API endpoint because it's better for the client-side to do the routing
 //    //At initial launch ("/"), we sent the front-end application ALL the BOOK DATA hence it's holding the data already
