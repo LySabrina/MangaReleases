@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service    //Spring can register this and bring all your beans
 public class BookServiceImpl implements BookService {
@@ -32,45 +33,32 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> getAllBooks() {
         List<Book> allBooks = bookRepository.findAll();
-        List<BookDTO> allBooksDTO = new ArrayList<>();
-        for(Book b : allBooks){
-            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-            allBooksDTO.add(bookDTO);
-        }
-        return allBooksDTO;
+        //Easier way to do this instead of using a for-each loop, looks cleanier too
+        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+//        List<BookDTO> allBooksDTO = new ArrayList<>();
+//        for(Book b : allBooks){
+//            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
+//            allBooksDTO.add(bookDTO);
+//        }
+//        return allBooksDTO;
     }
 
     @Override
     public List<BookDTO> getBooksByDate(int year, String month) {
         List<Book> allBooks = bookRepository.getBooksByDate(year,month);
-        List<BookDTO> allBooksDTO = new ArrayList<>();
-        for(Book b: allBooks){
-            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-            allBooksDTO.add(bookDTO);
-        }
-        return allBooksDTO;
+        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
     }
 
     @Override
     public List<BookDTO> getBooksByDateGenre(int year, String month, String[] formats) {
         List<Book> allBooks = bookRepository.getBookByDateGenre(year, month, formats);
-        List<BookDTO> allBooksDTO = new ArrayList<>();
-        for(Book b: allBooks){
-            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-            allBooksDTO.add(bookDTO);
-        }
-        return allBooksDTO;
+        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
     }
 
     @Override
     public List<BookDTO> findBooksMatchingFormat(String[] formats) {
         List<Book> allBooks = bookRepository.findBooksMatchingFormat(formats);
-        List<BookDTO> allBooksDTO = new ArrayList<>();
-        for(Book b: allBooks){
-            BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-            allBooksDTO.add(bookDTO);
-        }
-        return allBooksDTO;
+        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
     }
 
     @Override
