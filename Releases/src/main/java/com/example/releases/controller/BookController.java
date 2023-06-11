@@ -6,6 +6,7 @@ import com.example.releases.model.Type;
 import com.example.releases.respository.BookRepository;
 import com.example.releases.respository.GenresRepository;
 import com.example.releases.services.BookService;
+import com.example.releases.services.GenresService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,6 +18,11 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
+
+/**
+ * TODO:
+ * Convert all methods to use the service and dto
+ */
 
 //@RestController tells SpringBoot to convert Java Object to JSON (ex. Book is converted to JSON format when you getBookByID)
 @RestController //Spring will automatically convert your return object into a ResponseEntity with all the status code and default headers
@@ -32,14 +38,13 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private GenresService genresService;
+
     @GetMapping("/")
     public List<BookDTO> getAllBooks(){
-        //let us get all the books from the database. Look at each of its imagePath
-        //From the imagePath
-//       return (List<Book>) bookRepository.findAll();
         return bookService.getAllBooks();
     }
-
 
 
 //    //No need for the API endpoint because it's better for the client-side to do the routing
@@ -54,53 +59,44 @@ public class BookController {
 
     @GetMapping("/genres")
     public List<String> getAllGenres(){
-
-        List<String> allGenres = genresRepository.getAllGenresName();
-        return  allGenres;
+        return genresService.getAllGenres();
     }
+
 
     @GetMapping("/formats")
     public Type[] getAllFormats(){
-        return Type.values();
+        return bookService.getAllFormats();
     }
 
     @GetMapping("{id}/image")
     public ResponseEntity<String> getImage(@PathVariable Long id) throws IOException {
-        Book book = bookRepository.getReferenceById(id);
-        if(book == null){
-            return ResponseEntity.notFound().build();
-        }
-        String imagePath = book.getImagePath();
-        File image = new File(imagePath + ".jpg");      //might need to add an extensions when saving manga from Sevenseas
-        byte[] imageContents = FileUtils.readFileToByteArray(image);
-        String encodedFile = Base64.getEncoder().encodeToString(imageContents);
-         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(encodedFile);
+        return bookService.getBookImage(id);
     }
 
     @GetMapping("/date")
-    public List<Book> getBooksByDate(@RequestParam int year, @RequestParam String month){
-        return bookRepository.getBooksByDate(year, month);
+    public List<BookDTO> getBooksByDate(@RequestParam int year, @RequestParam String month){
+        return bookService.getBooksByDate(year, month);
     }
 
     @GetMapping("/dateGenre")
-    public List<Book> getBooksByDateGenre(@RequestParam int year, @RequestParam String month, @RequestParam String[] formats){
-        return bookRepository.getBookByDateGenre(year, month, formats);
+    public List<BookDTO> getBooksByDateGenre(@RequestParam int year, @RequestParam String month, @RequestParam String[] formats){
+        return bookService.getBooksByDateGenre(year,month,formats);
     }
 
     @GetMapping("/getFormats")
-    public List<Book> findBooksMatchingFormat(@RequestParam String[] formats){
-        return bookRepository.findBooksMatchingFormat(formats);
+    public List<BookDTO> findBooksMatchingFormat(@RequestParam String[] formats){
+        return bookService.findBooksMatchingFormat(formats);
     }
 
     @GetMapping("{id}/genres")
     public List<String> getBookGenres(@PathVariable Long id){
-        return bookRepository.getBookGenres(id);
+            return bookService.getBookGenres(id);
     }
 
 
     //formats, genres
     @GetMapping("/filters")
-    public List<Book> getFilteredBooks(@RequestParam(required = false) Integer year, @RequestParam(required = false) String month, @RequestParam(required = false) String[] formats, @RequestParam(required = false) String[] genres){
+    public List<BookDTO> getFilteredBooks(@RequestParam(required = false) Integer year, @RequestParam(required = false) String month, @RequestParam(required = false) String[] formats, @RequestParam(required = false) String[] genres){
         //now i need to know which of these are toggled
           /*
         - select only format for ALL books
@@ -110,13 +106,6 @@ public class BookController {
         - select genre and date
         - select both format and genre and date
      */
-        if(year == null && month == null && genres == null ){
-            //meaning format was only picked
-            return bookRepository.findBooksMatchingFormat(formats);
-        }
-        else if(year == null && month == null & formats == null){
-            return bookRepository.getBooksByGenres(genres);
-        }
-        return null;
+        return bookService.getFilteredBooks(year, month, formats, genres);
     }
 }
