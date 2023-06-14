@@ -39,6 +39,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookDTO getBookById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(()-> new BookNotFoundException("Book ID could not be found"));
+        return bookMapper.INSTANCE.mapToBookDTO(book);
+    }
+
+    @Override
     public List<BookDTO> getBooksByDate(int year, String month) {
         List<Book> allBooks = bookRepository.getBooksByDate(year,month);
         return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());

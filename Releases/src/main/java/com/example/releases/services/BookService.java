@@ -14,6 +14,8 @@ public interface BookService {
 
     public List<BookDTO> getAllBooks();
 
+    public BookDTO getBookById(Long id);
+
     public List<BookDTO> getBooksByDate(@RequestParam int year, @RequestParam String month);
 
     public List<BookDTO> getBooksByDateGenre(@RequestParam int year, @RequestParam String month, @RequestParam String[] formats);

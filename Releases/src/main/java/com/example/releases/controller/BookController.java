@@ -47,6 +47,13 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
+    //TEST LATER
+    @GetMapping("/BookDetails/{id}")
+    public BookDTO getBookById(@PathVariable Long id){
+        return bookService.getBookById(id);
+    }
+
+    //Scratch that, I am implementing Reviews so we need to have a Get
 //    //No need for the API endpoint because it's better for the client-side to do the routing
 //    //At initial launch ("/"), we sent the front-end application ALL the BOOK DATA hence it's holding the data already
 //     There's no need for it to make another HTTP REQUEST (which takes time) to get data when it already have it
