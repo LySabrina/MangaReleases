@@ -66,6 +66,14 @@ export default function BookDetails() {
           </dl>
         </div>
       </div>
+
+      <div className="book-reviews" style={{backgroundColor: "red", width:"100px"}}>
+        <div className="book-review">
+          <img src="" alt="User picture"/>
+          <h4>USERNAME</h4>
+          <p>MY REVIEW INSERT HERE</p>
+        </div>
+      </div>
     </div>
   );
 }

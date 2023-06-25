@@ -2,8 +2,9 @@
     margin:20px;
 }
 
+
 .filter-container > *{
-    margin:auto;
+    margin: 0 auto;
 }
 
 .content-container{
@@ -11,11 +12,6 @@
 
 }
 
-.table{
-    display: flex;
-    flex-wrap: wrap;   
-
-}
 
 .sidebar-container{
     margin :10px;
@@ -23,12 +19,24 @@
     padding:10px;
 
 }
+.table{
+    display: flex;
+    flex-wrap: wrap;   
 
+}
 .link{
     text-decoration: none;
     color:white;
     flex-basis: auto ;
     flex: 1 1 0px;
+    margin: 10px;
+    margin-bottom: 2rem;
+    margin-right:1rem;
+
+    /*
+    flex is short for: 
+    flex-grow , flex-shrink, flex-basis 
+    */
     
     transform-style: preserve-3d;
     transform: rotateX(var(--rotateX)) rotateY(var(--rotateY));
@@ -36,7 +44,4 @@
 
 .link:not(:hover){
     transform: rotateX(0deg) rotateY(0deg);
-}
-.flex-item{
-    
 }

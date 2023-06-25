@@ -37,6 +37,7 @@ export default function SideBar({ formats, genres, sidebarCallback }) {
     sidebarCallback(formatFilters,genresFilters);
   }
 
+  
   //Printing state purpose
   // useEffect(()=>{
   //   console.log(genresFilters);
@@ -45,6 +46,13 @@ export default function SideBar({ formats, genres, sidebarCallback }) {
 
   return (
     <div id="sideBar" className = "p-2">
+      <div className ='yearMonth'>
+        <form>
+          <input type ='text'/>
+        </form>
+
+
+      </div>
       <form className="filter" >
         <div>
           <h3>Format</h3>

@@ -45,19 +45,6 @@ export default function Filter({ filterCallback }) {
     }
   }, [year,month]);
 
-  // useEffect(() => {
-  //   year !== "-" &&
-  //     month !== "-" &&
-  //     axios
-  //       .get(`http://localhost:8080/date?year=${year}&month=${month}`)
-  //       .then((response) => {
-  //         filterCallback(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log("error");
-  //       });
-  // }, [year, month]);
-
   return (
     <div id="filter-container">
       <div id="filter-form">
@@ -87,11 +74,7 @@ export default function Filter({ filterCallback }) {
         </form>
       </div>
 
-      <div id = "searchbar">
-          <form method = "GET">
-            <input type='text' placeholder='Enter Book Name'></input>
-          </form>
-      </div>
+     
     </div>
   );
 }
