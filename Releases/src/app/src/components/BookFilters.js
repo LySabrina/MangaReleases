@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function BookFilters({
   bookFiltersCallback,
-  yearMonthCallback,
-  genreYearCallback,
-  formats,
-  genres,
+  setLoading,
+  setError,
+  setErrMessage
 }) {
   const MONTHS = [
     "January",
@@ -34,6 +34,23 @@ export default function BookFilters({
     }
   }
   generateYears();
+
+  const [dbGenres, setDbGenres] = useState([]);
+  const [dbFormats, setDbFormats] = useState([]);
+
+  useEffect(()=>{
+    const promiseFormats = axios.get("http://localhost:8080/formats");
+    const promiseGenres = axios.get("http://localhost:8080/genres");
+
+    Promise.all([promiseFormats,promiseGenres]).then((response)=>{
+      setDbFormats(response[0].data);
+      setDbGenres(response[1].data);
+    }).catch((error)=>{
+      setLoading(false);
+      setError(true);
+      setErrMessage("SERVER IS DOWN. TRY AGAIN ANOTHER TIME");
+    })
+  },[])
 
   //state to hold the selected filters BY THE USER
   const [filters, setFilters] = useState({
@@ -90,6 +107,7 @@ export default function BookFilters({
   }, [filters.year, filters.month]);
   
   console.log(filters);
+
   return (
     <div>
       <form id="filters" method="GET">
@@ -117,7 +135,7 @@ export default function BookFilters({
 
         <div className="format-container">
           <h3>Format</h3>
-          {formats.map((element, index) => (
+          {dbFormats.map((element, index) => (
             <div className="format-list">
               <input
                 type="checkbox"
@@ -137,7 +155,7 @@ export default function BookFilters({
 
         <div className="genres-container">
           <h3>Genres</h3>
-          {genres.map((element, index) => (
+          {dbGenres.map((element, index) => (
             <div className="genres-list">
               <input
                 type="checkbox"
@@ -152,7 +170,6 @@ export default function BookFilters({
             </div>
           ))}
         </div>
-
       </form>
     </div>
   );

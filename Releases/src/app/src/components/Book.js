@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../style/Book.css';
 import '../style/Home.css';
 //TODO: Fix the issue where Springboot has an issue with the {id} being a String from the path and it didnt work
-export default function Book({name, releaseDate, id}) {
+export default function Book({name, releaseDate, id, price}) {
   const [imageSrc, setImageSrc] = useState("");
   
   useEffect(() =>{
@@ -20,8 +20,10 @@ export default function Book({name, releaseDate, id}) {
     }).catch((error)=>{
       console.log('ERROR IN GETTING IMAGE');
     })
-  }, []);
+  }, [id]);
 
+  
+  
   return (
       <div class="book">
         <div class="imageContainer">
@@ -31,6 +33,7 @@ export default function Book({name, releaseDate, id}) {
         <div class="book-info">
           <h3 className = "title">{name}</h3>
           <h5 className = "releaseDate">Release Date: {releaseDate}</h5>
+          <p>Price:{price}</p>
         </div>
       </div>
     
