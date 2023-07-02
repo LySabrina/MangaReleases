@@ -3,25 +3,15 @@ package com.example.releases.utilities;
 import com.example.releases.model.Book;
 import com.example.releases.model.Genres;
 import com.example.releases.model.Type;
-import com.example.releases.respository.GenresRepository;
-import com.example.releases.utilities.ImageDownloader;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * NOTES

@@ -1,11 +1,8 @@
 package com.example.releases.utilities;
 
 import com.example.releases.model.Genres;
-import com.example.releases.respository.GenresRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.releases.repository.GenresRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class GenresService {

@@ -1,4 +1,4 @@
-package com.example.releases.respository;
+package com.example.releases.repository;
 
 import com.example.releases.model.Genres;
 import org.springframework.data.jpa.repository.JpaRepository;

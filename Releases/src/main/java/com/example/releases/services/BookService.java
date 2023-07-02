@@ -1,6 +1,7 @@
 package com.example.releases.services;
 
 import com.example.releases.dto.BookDTO;
+import com.example.releases.dto.BookGetAllResponse;
 import com.example.releases.model.Book;
 import com.example.releases.model.Type;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public interface BookService {
 
-    public List<BookDTO> getAllBooks();
+    public BookGetAllResponse getAllBooks(int pageNo, int pageSize);
 
     public BookDTO getBookById(Long id);
 

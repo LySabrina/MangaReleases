@@ -1,15 +1,12 @@
-package com.example.releases.respository;
+package com.example.releases.repository;
 
 import com.example.releases.model.Book;
-import com.example.releases.model.Genres;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
@@ -50,6 +47,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         - select genre and date
         - select both format and genre and date
      */
+
+    //MAKE A FUNCTION THAT HAS OPTINAL PARAMETERS genres, formats, year, and month
+
+    @Query(value = "SELECT * from ", nativeQuery = true)
+    public List<Book>  getFilteredBooks();
 
 
 

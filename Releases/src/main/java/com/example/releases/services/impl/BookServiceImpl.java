@@ -1,14 +1,18 @@
 package com.example.releases.services.impl;
 
 import com.example.releases.dto.BookDTO;
+import com.example.releases.dto.BookGetAllResponse;
 import com.example.releases.dto.mapper.BookMapper;
 import com.example.releases.exceptions.BookNotFoundException;
 import com.example.releases.model.Book;
 import com.example.releases.model.Type;
-import com.example.releases.respository.BookRepository;
+import com.example.releases.repository.BookRepository;
 import com.example.releases.services.BookService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,10 +36,22 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDTO> getAllBooks() {
-        List<Book> allBooks = bookRepository.findAll();
-        //Easier way to do this instead of using a for-each loop, looks cleaner too
-        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+    public BookGetAllResponse getAllBooks(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Book> books = bookRepository.findAll(pageable);
+
+        List<Book> listOfBook = books.getContent();
+        List<BookDTO> content = listOfBook.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+
+        BookGetAllResponse bookGetAllResponse = new BookGetAllResponse();
+        bookGetAllResponse.setContent(content);
+        bookGetAllResponse.setPageNo(books.getNumber());
+        bookGetAllResponse.setPageSize(books.getSize());
+        bookGetAllResponse.setTotalPageNo(books.getTotalPages());
+        bookGetAllResponse.setTotalElements(books.getTotalElements());
+
+        return bookGetAllResponse;
+
     }
 
     @Override
@@ -65,24 +81,56 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> getFilteredBooks(Integer year, String month, String[] formats, String[] genres) {
         List<BookDTO> allBooksDTO = new ArrayList<>();
-        if(year == null && month == null && genres == null ){
-            //meaning format was only picked
+
+        //this is a terrible way of figuring out what the user has selected in their filters choice
+        //maybe create a single master function in BookService?
+        //if year and month are selected then i need to have the genres and format be exclusively follow those dates
+        if(year != null && month != null){
+            if(genres != null ){
+
+            }
+        }
+
+        if(genres != null){
+            List<Book> allBooks = bookRepository.getBooksByGenres(genres);
+            for(Book b : allBooks){
+                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
+                allBooksDTO.add(bookDTO);
+            }
+        }
+        if(formats != null){
             List<Book> allBooks = bookRepository.findBooksMatchingFormat(formats);
             for(Book b: allBooks){
                 BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
                 allBooksDTO.add(bookDTO);
             }
-            return allBooksDTO;
         }
-        else if(year == null && month == null & formats == null){
-            List<Book> allBooks = bookRepository.getBooksByGenres(genres);
+        if(year != null && month != null){
+            List<Book> allBooks = bookRepository.getBooksByDate(year,month);
+            System.out.println("INSIDE");
             for(Book b: allBooks){
                 BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
                 allBooksDTO.add(bookDTO);
             }
-            return allBooksDTO;
         }
-        return null;
+//        if(year == null && month == null && genres == null ){
+//            //meaning format was only picked
+//            List<Book> allBooks = bookRepository.findBooksMatchingFormat(formats);
+//            for(Book b: allBooks){
+//                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
+//                allBooksDTO.add(bookDTO);
+//            }
+//        }
+//        else if(year == null && month == null && formats == null){
+//            //meaning genres was only picked
+//            List<Book> allBooks = bookRepository.getBooksByGenres(genres);
+//            for(Book b: allBooks){
+//                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
+//                allBooksDTO.add(bookDTO);
+//            }
+//        }
+
+      return allBooksDTO;
     }
 
     @Override

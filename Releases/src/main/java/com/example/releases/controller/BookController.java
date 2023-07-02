@@ -1,28 +1,22 @@
 package com.example.releases.controller;
 
 import com.example.releases.dto.BookDTO;
-import com.example.releases.exceptions.BookNotFoundException;
-import com.example.releases.model.Book;
+import com.example.releases.dto.BookGetAllResponse;
 import com.example.releases.model.Type;
-import com.example.releases.respository.BookRepository;
-import com.example.releases.respository.GenresRepository;
+import com.example.releases.repository.BookRepository;
+import com.example.releases.repository.GenresRepository;
 import com.example.releases.services.BookService;
 import com.example.releases.services.GenresService;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 
 /**
  * TODO:
- * Convert all methods to use the service and dto
  */
 
 //@RestController tells SpringBoot to convert Java Object to JSON (ex. Book is converted to JSON format when you getBookByID)
@@ -43,8 +37,9 @@ public class BookController {
     private GenresService genresService;
 
     @GetMapping("/")
-    public List<BookDTO> getAllBooks(){
-        return bookService.getAllBooks();
+    public BookGetAllResponse getAllBooks(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                          @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
+        return bookService.getAllBooks(pageNo, pageSize);
     }
 
     //TEST LATER
@@ -115,4 +110,6 @@ public class BookController {
      */
         return bookService.getFilteredBooks(year, month, formats, genres);
     }
+
+
 }
