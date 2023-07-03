@@ -53,6 +53,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT * from ", nativeQuery = true)
     public List<Book>  getFilteredBooks();
 
-
+    @Query(value = "SELECT * from Book where name like :query%", nativeQuery = true)
+    public List<Book> search(@Param("query") String query);
 
 }

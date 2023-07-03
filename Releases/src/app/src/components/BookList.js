@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Book from "./Book";
 import Pagination from "./Pagination";
 
-export default function BookList() {
+export default function BookList({ searchQuery }) {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -37,23 +37,48 @@ export default function BookList() {
       });
   }, []);
 
+  useEffect(() => {
+    const api = `http://localhost:8080/search?query=${searchQuery}`;
+
+    const delay = setTimeout(() => {
+      if (searchQuery === "") {
+        axios
+          .get(
+            `http://localhost:8080/?pageNo=${page.currentPageNo}&pageSize=${page.currentPageSize}`
+          )
+          .then((response) => {
+            setBooks(response.data.content);
+          }).catch((error)=>{console.log(error)});
+
+      } else {
+        axios
+          .get(api)
+          .then((response) => {
+            setBooks(response.data)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }, 500);
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
+
   function handleSelectChange(e) {
     const perPageVal = e.target.value;
     setPage((prevPage) => ({
       ...prevPage,
       currentPageSize: perPageVal,
-      currentPageNo: 0
+      currentPageNo: 0,
     }));
     const getNewBooks = axios
-      .get(
-        `http://localhost:8080/?pageNo=${0}&pageSize=${perPageVal}`
-      )
+      .get(`http://localhost:8080/?pageNo=${0}&pageSize=${perPageVal}`)
       .then((response) => {
+        console.log("getNEWBOOKS");
         setPage((prevPage) => ({
           ...prevPage,
           currentTotalPageSize: response.data.totalPageNo,
         }));
-        console.log(response.data);
         setBooks(response.data.content);
       })
       .catch((error) => {
@@ -62,7 +87,6 @@ export default function BookList() {
   }
 
   function getNextPrevPage(pageNo) {
-    
     const getNewBooks = axios
       .get(
         `http://localhost:8080/?pageNo=${pageNo}&pageSize=${page.currentPageSize}`
@@ -71,20 +95,20 @@ export default function BookList() {
         setPage((prevPage) => ({
           ...prevPage,
           currentTotalPageSize: response.data.totalPageNo,
-          currentPageNo : pageNo,
-    
+          currentPageNo: pageNo,
         }));
         console.log(response.data);
         setBooks(response.data.content);
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         console.log("ERROR IN GETTING SPECIFIC PAGE NO AND PAGE SIZE");
       });
   }
+
   return (
     <div className="container">
-      {!hasError && (
+      {(!hasError && books.length !==0) && (
         <div>
           <span>Items per page:</span>
           <select
@@ -99,6 +123,9 @@ export default function BookList() {
         </div>
       )}
 
+      <div className="error-container">
+        {books.length === 0 &&  <h1>NO BOOKS FOUND WITH SEARCH RESULT: {searchQuery}</h1>}
+      </div>
       <div className="table">
         {loading ? (
           <LoadingSpinner />
@@ -122,7 +149,7 @@ export default function BookList() {
         )}
       </div>
 
-      {!hasError && (
+      {(!hasError && books.length !== 0) && (
         <div className="page-numbers">
           <Pagination
             currentPageNo={page.currentPageNo}

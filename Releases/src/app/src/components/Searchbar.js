@@ -6,22 +6,18 @@ import "../style/Home.css";
  * Should find the user raequired book based on continuous typing
  * If the input box is empty, then just go back to showing /all or the filtered books they have requested
  */
-export default function Searchbar({ getSearchedBook }) {
+export default function Searchbar({ getSearchedBook, searchQuery, setSearchQuery }) {
   //getSearchedBooks is a callback function that should go to the parent component to return the found result
-  const [searchQuery, setSearchQuery] = useState("");
+  
 
-  function handleSearchOnChange(e) {
-    const inputValue = e.target.value;
-    setSearchQuery(inputValue);
-  }
 
   return (
-    <form id="search" method="GET">
+    <form id="search" method="GET" onSubmit={(e)=>{e.preventDefault();}}>
       <input
         type="text"
         placeholder="Enter Book Name"
         value={searchQuery}
-        onChange={handleSearchOnChange}
+        onChange={(e)=>{setSearchQuery(e.target.value)}}
       ></input>
     </form>
   );

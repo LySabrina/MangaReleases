@@ -111,5 +111,9 @@ public class BookController {
         return bookService.getFilteredBooks(year, month, formats, genres);
     }
 
+    @GetMapping("/search")
+    public List<BookDTO> search(@RequestParam(required = true) String query){
+        return bookService.search(query);
+    }
 
 }

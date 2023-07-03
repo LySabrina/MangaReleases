@@ -22,6 +22,8 @@ export default function Home() {
   const [year, setYear] = useState();
   const [month, setMonth] = useState();
 
+  const [searchQuery, setSearchQuery] = useState("");
+  
   //holds the requested user's filters
   const [filters, setFilters] = useState({
     year: null,
@@ -30,8 +32,6 @@ export default function Home() {
     genres: [],
   });
 
-  const [pageSize, setPageSize] = useState(0);
-  const numPageElements = [10, 20, 25];
 
   //At initial mount, get all the books,genres, and formats from the database
 
@@ -49,47 +49,14 @@ export default function Home() {
     setMonth(month);
   }
 
-  // useEffect(() => {
-  //   const promiseBooks = axios.get("http://localhost:8080/");
-  //   const promiseFormats = axios.get("http://localhost:8080/formats");
-  //   const promiseGenres = axios.get("http://localhost:8080/genres");
-
-  //   Promise.all([promiseBooks, promiseFormats, promiseGenres])
-  //     .then((response) => {
-  //       // const arr = tempShuffle(response[0].data);
-
-  //       // setBooks(response[0].data.content);
-  //       // tempShuffle(response[0].data);
-
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setLoading(false);
-  //       setError(true);
-  //       setErrMessage("SERVER IS DOWN. TRY AGAIN ANOTHER TIME");
-  //     });
-  // }, []);
-
-  //when user's filter choice is updated, call the backend function to get all the filtered books
-  //after getting all the filtered books , set the books to all those books
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:8080/filters")
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [filters]);
-
+  
   return (
     <div>
       <Navbar />
 
       {/* className should be called searchbar-container*/}
       <div className="filter-container ">
-        <Searchbar />
+        <Searchbar searchQuery = {searchQuery} setSearchQuery = {setSearchQuery}/>
         {/* <Filter className = 'filters' filterCallback={filterCallback}/>
           <Searchbar getSearchedBook={getSearchedBook}/> */}
       </div>
@@ -104,7 +71,7 @@ export default function Home() {
         />
 
         {hasError && <p>{errMessage}</p>}
-        <BookList pageSize={pageSize} />
+        <BookList searchQuery = {searchQuery}/>
       </div>
     </div>
   );

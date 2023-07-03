@@ -157,5 +157,11 @@ public class BookServiceImpl implements BookService {
         return Type.values();
     }
 
+    @Override
+    public List<BookDTO> search(String query) {
+        List<Book> allBooks = bookRepository.search(query);
+        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+    }
+
 
 }

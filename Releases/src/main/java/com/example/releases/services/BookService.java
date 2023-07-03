@@ -30,4 +30,6 @@ public interface BookService {
     public List<String> getBookGenres(@PathVariable Long id);
 
     public Type[] getAllFormats();
+
+    public List<BookDTO> search(@RequestParam(required = true) String query);
 }
