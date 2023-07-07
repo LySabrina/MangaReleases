@@ -2,6 +2,8 @@ package com.example.releases.controller;
 
 import com.example.releases.dto.BookDTO;
 import com.example.releases.dto.BookGetAllResponse;
+import com.example.releases.model.Book;
+import com.example.releases.model.Genres;
 import com.example.releases.model.Type;
 import com.example.releases.repository.BookRepository;
 import com.example.releases.repository.GenresRepository;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,7 +35,6 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
-
     @Autowired
     private GenresService genresService;
 
@@ -95,25 +97,25 @@ public class BookController {
             return bookService.getBookGenres(id);
     }
 
-
-    //formats, genres
     @GetMapping("/filters")
     public List<BookDTO> getFilteredBooks(@RequestParam(required = false) Integer year, @RequestParam(required = false) String month, @RequestParam(required = false) String[] formats, @RequestParam(required = false) String[] genres){
-        //now i need to know which of these are toggled
-          /*
-        - select only format for ALL books
-        - select only genres for ALL books
-        - select both format and genres for ALL books
-        - select format and date
-        - select genre and date
-        - select both format and genre and date
-     */
         return bookService.getFilteredBooks(year, month, formats, genres);
     }
 
     @GetMapping("/search")
     public List<BookDTO> search(@RequestParam(required = true) String query){
         return bookService.search(query);
+    }
+    
+    private List<Type> convertToFormatEnums(String[] formats) {
+        if (formats == null) {
+            return null;
+        }
+        List<Type> formatEnums = new ArrayList<>();
+        for (String format : formats) {
+            formatEnums.add(Type.valueOf(format));
+        }
+        return formatEnums;
     }
 
 }

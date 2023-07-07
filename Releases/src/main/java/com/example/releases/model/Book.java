@@ -38,7 +38,7 @@ public class Book {
     @JsonIgnore
     @JoinTable(name="books_genres",
                joinColumns = @JoinColumn(name = "book_id"),
-               inverseJoinColumns = @JoinColumn(name = "genres.id")
+               inverseJoinColumns = @JoinColumn(name = "genre_id")
                 )
     private List<Genres> genres = new ArrayList<>();
 

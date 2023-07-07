@@ -1,5 +1,6 @@
 package com.example.releases.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.checkerframework.checker.units.qual.C;
@@ -21,6 +22,7 @@ public class Genres implements Comparable<Genres>{
     private String name;
 
     @ManyToMany(mappedBy = "genres")
+    @JsonIgnore
     private Set<Book> books = new HashSet<>();
 
     public Genres(String name){

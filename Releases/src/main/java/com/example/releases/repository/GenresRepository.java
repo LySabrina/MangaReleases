@@ -21,4 +21,5 @@ public interface GenresRepository extends JpaRepository<Genres, Long> {
 
     @Query(value = "Select name, id from genres", nativeQuery = true)
     public List<String> getAllGenres();
+
 }

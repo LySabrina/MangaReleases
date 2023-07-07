@@ -78,60 +78,7 @@ public class BookServiceImpl implements BookService {
         return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
     }
 
-    @Override
-    public List<BookDTO> getFilteredBooks(Integer year, String month, String[] formats, String[] genres) {
-        List<BookDTO> allBooksDTO = new ArrayList<>();
 
-        //this is a terrible way of figuring out what the user has selected in their filters choice
-        //maybe create a single master function in BookService?
-        //if year and month are selected then i need to have the genres and format be exclusively follow those dates
-        if(year != null && month != null){
-            if(genres != null ){
-
-            }
-        }
-
-        if(genres != null){
-            List<Book> allBooks = bookRepository.getBooksByGenres(genres);
-            for(Book b : allBooks){
-                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-                allBooksDTO.add(bookDTO);
-            }
-        }
-        if(formats != null){
-            List<Book> allBooks = bookRepository.findBooksMatchingFormat(formats);
-            for(Book b: allBooks){
-                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-                allBooksDTO.add(bookDTO);
-            }
-        }
-        if(year != null && month != null){
-            List<Book> allBooks = bookRepository.getBooksByDate(year,month);
-            System.out.println("INSIDE");
-            for(Book b: allBooks){
-                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-                allBooksDTO.add(bookDTO);
-            }
-        }
-//        if(year == null && month == null && genres == null ){
-//            //meaning format was only picked
-//            List<Book> allBooks = bookRepository.findBooksMatchingFormat(formats);
-//            for(Book b: allBooks){
-//                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-//                allBooksDTO.add(bookDTO);
-//            }
-//        }
-//        else if(year == null && month == null && formats == null){
-//            //meaning genres was only picked
-//            List<Book> allBooks = bookRepository.getBooksByGenres(genres);
-//            for(Book b: allBooks){
-//                BookDTO bookDTO = bookMapper.INSTANCE.mapToBookDTO(b);
-//                allBooksDTO.add(bookDTO);
-//            }
-//        }
-
-      return allBooksDTO;
-    }
 
     @Override
     public ResponseEntity<String> getBookImage(Long id)  throws IOException{
@@ -157,6 +104,12 @@ public class BookServiceImpl implements BookService {
         return Type.values();
     }
 
+    @Override
+    public List<BookDTO> getFilteredBooks(Integer year, String month, String[] formats, String[] genres) {
+        List<BookDTO> allBooksDTO = new ArrayList<>();
+        List<Book> getFilteredBooks = bookRepository.getFilteredBooks(year, month, formats, genres);
+        return getFilteredBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+    }
     @Override
     public List<BookDTO> search(String query) {
         List<Book> allBooks = bookRepository.search(query);

@@ -1,6 +1,8 @@
 package com.example.releases.repository;
 
 import com.example.releases.model.Book;
+import com.example.releases.model.Genres;
+import com.example.releases.model.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,31 +31,20 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT genres.name from books_genres JOIN genres on genres_id = id where book_id = :bookId ", nativeQuery = true)
     public List<String> getBookGenres(@Param("bookId") Long bookId);
 
-    @Query(value = "Select * from book where name = :bookName", nativeQuery = true)
-    public Book getBookByName(@Param("bookName") String bookName);
-
-
-    //Cats as a genre with an id of 1. i want to get all books associated with that genre
     @Query(value = "SELECT * from BOOKS join books_genres IN :genres", nativeQuery = true)
     public List<Book> getBooksByGenres(@Param("genres") String[] genres);
 
-    // i got the genres, formats, year and month,
-    //i should handle situations where:
-    /*
-        - select only format for ALL books
-        - select only genres for ALL books
-        - select both format and genres for ALL books
-        - select format and date
-        - select genre and date
-        - select both format and genre and date
-     */
-
-    //MAKE A FUNCTION THAT HAS OPTINAL PARAMETERS genres, formats, year, and month
-
-    @Query(value = "SELECT * from ", nativeQuery = true)
-    public List<Book>  getFilteredBooks();
+    //Ever since Springboot 3.0, Springboot will convert the string into the Enum type
+    @Query(value = "SELECT b from Book b JOIN b.genres JOIN Genres g where (YEAR(b.releaseDate)=:year OR :year IS NULL) AND (MONTHNAME(b.releaseDate)=:month OR :month IS NULL) AND (b.type IN (:formats) OR :formats IS NULL) AND (g.name IN (:genres) OR :genres IS NULL)")
+    public List<Book> getFilteredBooks(@Param("year") Integer year, @Param("month") String month, @Param("formats") String[] formats, @Param("genres") String[] genres);
 
     @Query(value = "SELECT * from Book where name like :query%", nativeQuery = true)
     public List<Book> search(@Param("query") String query);
+
+//    @Query(value = "SELECT b.name from Book b JOIN Books_genres bg ON b.id = bg.book_id JOIN Genres g ON bg.genres_id = g.id where (YEAR(b.release_date)=:year OR :year IS NULL) AND (MONTHNAME(b.release_date)=:month OR :month IS NULL) AND (b.type IN (:formats) OR :formats IS NULL) AND (g.name IN (:genres) OR :genres IS NULL)", nativeQuery = true)
+//    public List<Book> test(@Param("year") Integer year, @Param("month") String month, @Param("formats") List<String> formats, @Param("genres") String[] genres);
+
+
+
 
 }
