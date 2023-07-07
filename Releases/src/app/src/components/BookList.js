@@ -10,8 +10,8 @@ export default function BookList({ searchQuery }) {
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errMessage, setErrMessage] = useState("");
-  
-  const[isSearch,setIsSearch] = useState(false);
+
+  const [isSearch, setIsSearch] = useState(false);
   const numPageElements = [10, 20, 25];
 
   const [page, setPage] = useState({
@@ -40,7 +40,9 @@ export default function BookList({ searchQuery }) {
 
   useEffect(() => {
     const api = `http://localhost:8080/search?query=${searchQuery}&pageNo=${page.currentPageNo}&pageSize=${page.currentPageSize}`;
-    setIsSearch((prevVal)=>{return !prevVal})
+    setIsSearch((prevVal) => {
+      return !prevVal;
+    });
     const delay = setTimeout(() => {
       if (searchQuery === "") {
         axios
@@ -49,15 +51,13 @@ export default function BookList({ searchQuery }) {
           )
           .then((response) => {
             setBooks(response.data.content);
-            setPage((prevPage)=>{
-              return(
-                {
-                  ...prevPage,
-                  currentPageNo: 0,
-                  currentTotalPageSize: response.data.totalPageNo
-                }
-              )
-            })
+            setPage((prevPage) => {
+              return {
+                ...prevPage,
+                currentPageNo: 0,
+                currentTotalPageSize: response.data.totalPageNo,
+              };
+            });
           })
           .catch((error) => {
             console.log(error);
@@ -82,16 +82,18 @@ export default function BookList({ searchQuery }) {
   }, [searchQuery]);
 
   function handleSelectChange(e) {
+    
     const perPageVal = e.target.value;
     setPage((prevPage) => ({
       ...prevPage,
       currentPageSize: perPageVal,
       currentPageNo: 0,
     }));
-    const getNewBooks = axios
+    if(searchQuery === ""){
+      const getNewBooks = axios
       .get(`http://localhost:8080/?pageNo=${0}&pageSize=${perPageVal}`)
       .then((response) => {
-        console.log("getNEWBOOKS");
+        
         setPage((prevPage) => ({
           ...prevPage,
           currentTotalPageSize: response.data.totalPageNo,
@@ -101,10 +103,25 @@ export default function BookList({ searchQuery }) {
       .catch((error) => {
         console.log("ERROR IN GETTING SPECIFIC PAGE NO AND PAGE SIZE");
       });
+    }
+    else{
+      const getNewBooks = axios.get(`http://localhost:8080/search?query=${searchQuery}&pageNo=${0}&pageSize=${perPageVal}`).then((response)=>{
+        setPage((prevPage)=>(
+          {
+            ...prevPage,
+            currentTotalPageSize: response.data.totalPageNo
+          }
+        ))
+        setBooks(response.data.content);
+      }).catch((error)=>{
+        console.log(error);
+      })
+    }
+   
   }
 
   function getNextPrevPage(pageNo) {
-    if (searchQuery ==="") {
+    if (searchQuery === "") {
       const getNewBooks = axios
         .get(
           `http://localhost:8080/?pageNo=${pageNo}&pageSize=${page.currentPageSize}`
@@ -116,15 +133,14 @@ export default function BookList({ searchQuery }) {
             currentTotalPageSize: response.data.totalPageNo,
             currentPageNo: pageNo,
           }));
- 
+
           setBooks(response.data.content);
         })
         .catch((error) => {
           console.log(error);
           console.log("ERROR IN GETTING SPECIFIC PAGE NO AND PAGE SIZE");
         });
-    }
-     else {
+    } else {
       const getNewBooks = axios
         .get(
           `http://localhost:8080/search?query=${searchQuery}&pageNo=${pageNo}&pageSize=${page.currentPageSize}`
