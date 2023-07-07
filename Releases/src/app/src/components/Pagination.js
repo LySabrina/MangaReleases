@@ -5,8 +5,8 @@ export default function Pagination({
   currentTotalPageSize,
   getNextPrevPage,
 }) {
-  const generatedPagination = new Array(currentTotalPageSize).fill(true);
 
+  const generatedPagination = new Array(currentTotalPageSize).fill(true);
   return (
     <nav>
       <ul className="pagination justify-content-center">

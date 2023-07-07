@@ -10,7 +10,8 @@ export default function BookList({ searchQuery }) {
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errMessage, setErrMessage] = useState("");
-
+  
+  const[isSearch,setIsSearch] = useState(false);
   const numPageElements = [10, 20, 25];
 
   const [page, setPage] = useState({
@@ -38,8 +39,8 @@ export default function BookList({ searchQuery }) {
   }, []);
 
   useEffect(() => {
-    const api = `http://localhost:8080/search?query=${searchQuery}`;
-
+    const api = `http://localhost:8080/search?query=${searchQuery}&pageNo=${page.currentPageNo}&pageSize=${page.currentPageSize}`;
+    setIsSearch((prevVal)=>{return !prevVal})
     const delay = setTimeout(() => {
       if (searchQuery === "") {
         axios
@@ -48,13 +49,29 @@ export default function BookList({ searchQuery }) {
           )
           .then((response) => {
             setBooks(response.data.content);
-          }).catch((error)=>{console.log(error)});
-
+            setPage((prevPage)=>{
+              return(
+                {
+                  ...prevPage,
+                  currentPageNo: 0,
+                  currentTotalPageSize: response.data.totalPageNo
+                }
+              )
+            })
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       } else {
         axios
           .get(api)
           .then((response) => {
-            setBooks(response.data)
+            setBooks(response.data.content);
+            setPage((prevPage) => ({
+              ...prevPage,
+              currentTotalPageSize: response.data.totalPageNo,
+              currentPageNo: 0,
+            }));
           })
           .catch((error) => {
             console.log(error);
@@ -87,28 +104,46 @@ export default function BookList({ searchQuery }) {
   }
 
   function getNextPrevPage(pageNo) {
-    const getNewBooks = axios
-      .get(
-        `http://localhost:8080/?pageNo=${pageNo}&pageSize=${page.currentPageSize}`
-      )
-      .then((response) => {
-        setPage((prevPage) => ({
-          ...prevPage,
-          currentTotalPageSize: response.data.totalPageNo,
-          currentPageNo: pageNo,
-        }));
-        console.log(response.data);
-        setBooks(response.data.content);
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log("ERROR IN GETTING SPECIFIC PAGE NO AND PAGE SIZE");
-      });
+    if (searchQuery ==="") {
+      const getNewBooks = axios
+        .get(
+          `http://localhost:8080/?pageNo=${pageNo}&pageSize=${page.currentPageSize}`
+        )
+        .then((response) => {
+          console.log(response);
+          setPage((prevPage) => ({
+            ...prevPage,
+            currentTotalPageSize: response.data.totalPageNo,
+            currentPageNo: pageNo,
+          }));
+ 
+          setBooks(response.data.content);
+        })
+        .catch((error) => {
+          console.log(error);
+          console.log("ERROR IN GETTING SPECIFIC PAGE NO AND PAGE SIZE");
+        });
+    }
+     else {
+      const getNewBooks = axios
+        .get(
+          `http://localhost:8080/search?query=${searchQuery}&pageNo=${pageNo}&pageSize=${page.currentPageSize}`
+        )
+        .then((response) => {
+          console.log(response);
+          setPage((prevPage) => ({
+            ...prevPage,
+            currentTotalPageSize: response.data.totalPageNo,
+            currentPageNo: pageNo,
+          }));
+          setBooks(response.data.content);
+        });
+    }
   }
 
   return (
     <div className="container">
-      {(!hasError && books.length !==0) && (
+      {!hasError && books.length !== 0 && (
         <div>
           <span>Items per page:</span>
           <select
@@ -124,7 +159,9 @@ export default function BookList({ searchQuery }) {
       )}
 
       <div className="error-container">
-        {books.length === 0 &&  <h1>NO BOOKS FOUND WITH SEARCH RESULT: {searchQuery}</h1>}
+        {books.length === 0 && (
+          <h1>NO BOOKS FOUND WITH SEARCH RESULT: {searchQuery}</h1>
+        )}
       </div>
       <div className="table">
         {loading ? (
@@ -149,7 +186,7 @@ export default function BookList({ searchQuery }) {
         )}
       </div>
 
-      {(!hasError && books.length !== 0) && (
+      {!hasError && books.length !== 0 && (
         <div className="page-numbers">
           <Pagination
             currentPageNo={page.currentPageNo}
