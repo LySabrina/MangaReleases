@@ -3,6 +3,8 @@ package com.example.releases.repository;
 import com.example.releases.model.Book;
 import com.example.releases.model.Genres;
 import com.example.releases.model.Type;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,13 +40,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT b from Book b JOIN b.genres JOIN Genres g where (YEAR(b.releaseDate)=:year OR :year IS NULL) AND (MONTHNAME(b.releaseDate)=:month OR :month IS NULL) AND (b.type IN (:formats) OR :formats IS NULL) AND (g.name IN (:genres) OR :genres IS NULL)")
     public List<Book> getFilteredBooks(@Param("year") Integer year, @Param("month") String month, @Param("formats") String[] formats, @Param("genres") String[] genres);
 
-    @Query(value = "SELECT * from Book where name like :query%", nativeQuery = true)
-    public List<Book> search(@Param("query") String query);
-
-//    @Query(value = "SELECT b.name from Book b JOIN Books_genres bg ON b.id = bg.book_id JOIN Genres g ON bg.genres_id = g.id where (YEAR(b.release_date)=:year OR :year IS NULL) AND (MONTHNAME(b.release_date)=:month OR :month IS NULL) AND (b.type IN (:formats) OR :formats IS NULL) AND (g.name IN (:genres) OR :genres IS NULL)", nativeQuery = true)
-//    public List<Book> test(@Param("year") Integer year, @Param("month") String month, @Param("formats") List<String> formats, @Param("genres") String[] genres);
+//    @Query(value = "SELECT * from Book where name like :query%", nativeQuery = true)
+//    public List<Book> search(@Param("query") String query);
 
 
+    @Query(value = "SELECT * FROM Book b WHERE LOWER(b.name) LIKE LOWER(CONCAT('%', ?1,'%'))", nativeQuery = true)
+    public Page<Book> search(@Param("query") String query, Pageable pageable);
 
 
 }

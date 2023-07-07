@@ -31,4 +31,6 @@ public interface BookService {
     public Type[] getAllFormats();
     public List<BookDTO> getFilteredBooks(@Param("year") Integer year, @Param("month") String month, @Param("formats") String[] formats, @Param("genres") String[] genres);
     public List<BookDTO> search(@RequestParam(required = true) String query);
+
+    public BookGetAllResponse search(@RequestParam(required = true) String query, int pageNo, int pageSize);
 }

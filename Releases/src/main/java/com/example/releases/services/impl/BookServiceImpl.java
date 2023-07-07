@@ -110,11 +110,36 @@ public class BookServiceImpl implements BookService {
         List<Book> getFilteredBooks = bookRepository.getFilteredBooks(year, month, formats, genres);
         return getFilteredBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
     }
+
     @Override
     public List<BookDTO> search(String query) {
-        List<Book> allBooks = bookRepository.search(query);
-        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+        return null;
     }
 
 
+//    @Override
+//    public List<BookDTO> search(String query) {
+//        List<Book> allBooks = bookRepository.search(query);
+//        return allBooks.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+//    }
+
+    @Override
+    public BookGetAllResponse search(String query, int pageNo, int pageSize) {
+        Pageable page = PageRequest.of(pageNo,pageSize);
+        Page<Book> books = bookRepository.search(query, page);
+
+        List<Book> listOfBook = books.getContent();
+        List<BookDTO> content = listOfBook.stream().map(book -> bookMapper.INSTANCE.mapToBookDTO(book)).collect(Collectors.toList());
+
+        BookGetAllResponse bookGetAllResponse = new BookGetAllResponse();
+        bookGetAllResponse.setContent(content);
+
+        bookGetAllResponse.setPageNo(books.getNumber());
+        bookGetAllResponse.setPageSize(books.getSize());
+        bookGetAllResponse.setTotalPageNo(books.getTotalPages());
+        bookGetAllResponse.setTotalElements(books.getTotalElements());
+
+        return bookGetAllResponse;
+
+    }
 }

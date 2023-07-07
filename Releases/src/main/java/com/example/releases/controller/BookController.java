@@ -103,10 +103,13 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<BookDTO> search(@RequestParam(required = true) String query){
-        return bookService.search(query);
+    public BookGetAllResponse search(@RequestParam(required = true) String query, @RequestParam(required = false, defaultValue = "0") int pageNo, @RequestParam(required = false, defaultValue = "10")int pageSize){
+              return bookService.search(query,pageNo,pageSize);
     }
-    
+//    public List<BookDTO> search(@RequestParam(required = true) String query){
+//        return bookService.search(query);
+//    }
+
     private List<Type> convertToFormatEnums(String[] formats) {
         if (formats == null) {
             return null;
