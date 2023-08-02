@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 /**
  * TODO:
  */
@@ -94,7 +95,7 @@ public class BookController {
 
     @GetMapping("{id}/genres")
     public List<String> getBookGenres(@PathVariable Long id){
-            return bookService.getBookGenres(id);
+        return bookService.getBookGenres(id);
     }
 
     @GetMapping("/filters")
@@ -104,12 +105,16 @@ public class BookController {
 
     @GetMapping("/search")
     public BookGetAllResponse search(@RequestParam(required = true) String query, @RequestParam(required = false, defaultValue = "0") int pageNo, @RequestParam(required = false, defaultValue = "10")int pageSize){
-              return bookService.search(query,pageNo,pageSize);
+        return bookService.search(query,pageNo,pageSize);
     }
 //    public List<BookDTO> search(@RequestParam(required = true) String query){
 //        return bookService.search(query);
 //    }
 
+    @GetMapping("/test")
+    public String test(){
+        return "ON HOME";
+    }
     private List<Type> convertToFormatEnums(String[] formats) {
         if (formats == null) {
             return null;

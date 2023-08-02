@@ -3,6 +3,8 @@ import { useLocation } from "react-router";
 import axios from "axios";
 import "../style/BookDetails.css";
 import Navbar from "../layouts/Navbar";
+import Rating from "../components/Review/Rating";
+import Review from "../components/Review/Review";
 export default function BookDetails() {
   const state = useLocation();
   const bookData = state.state;
@@ -31,11 +33,10 @@ export default function BookDetails() {
 
   return (
     <div>
-      <Navbar/>
       <div className="book-details_container container">
         <div className="image-container">
           {hasError && <h1>COULD NOT FETCH IMAGE FROM DATABASE</h1>}
-          <img src={`data:image/jpg;base64,${image}`} className = "image" />
+          <img src={`data:image/jpg;base64,${image}`} className="image" />
         </div>
 
         <div className="description-container">
@@ -67,11 +68,13 @@ export default function BookDetails() {
         </div>
       </div>
 
-      <div className="book-reviews" style={{backgroundColor: "red", width:"100px"}}>
+      <div
+        className="book-reviews w-100 container mt-5"
+        style={{ backgroundColor: "", width: "100px" }}
+      >
+        <h1>REVIEWS PLACEHOLDER</h1>
         <div className="book-review">
-          <img src="" alt="User picture"/>
-          <h4>USERNAME</h4>
-          <p>MY REVIEW INSERT HERE</p>
+          <Review />
         </div>
       </div>
     </div>

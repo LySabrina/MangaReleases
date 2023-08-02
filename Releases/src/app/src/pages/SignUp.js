@@ -36,7 +36,7 @@ export default function SignUp() {
 
   return (
     <div>
-        <Navbar />
+      
 
         {error.passwordError && <div className = "alert alert-danger">Passwords do not match!</div>}
         {error.usernameError && <div className = "alert alert-danger">Username already exists!</div>}

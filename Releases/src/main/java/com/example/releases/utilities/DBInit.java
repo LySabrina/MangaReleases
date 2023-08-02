@@ -4,6 +4,7 @@ import com.example.releases.model.Book;
 import com.example.releases.model.Genres;
 import com.example.releases.repository.BookRepository;
 import com.example.releases.repository.GenresRepository;
+import com.example.releases.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +25,8 @@ public class DBInit implements CommandLineRunner {
     @Autowired
     private GenresService service;
 
+    @Autowired
+    private UserRepository userRepository;
     @Override
     @Transactional
     /**
@@ -38,24 +41,27 @@ public class DBInit implements CommandLineRunner {
      * Runs an initial init to insert some data to the database
      */
     public void run(String... args) throws Exception {
-        bookRepository.deleteAll();
-        genresRepository.deleteAll();
-        HashMap<Book, List<Genres>> bookCollection = SevenSeaScraper.getHashBooks();
-        Set<Genres> collection = SevenSeaScraper.getGenres();
+//        bookRepository.deleteAll();
+//        genresRepository.deleteAll();
+//        HashMap<Book, List<Genres>> bookCollection = SevenSeaScraper.getHashBooks();
+//        Set<Genres> collection = SevenSeaScraper.getGenres();
+//
+//        for(Genres genre: collection){
+//            service.saveGenre(genre.getName());
+//        }
+//
+//        for(Map.Entry<Book, List<Genres>> element : bookCollection.entrySet()){
+//            Book book = element.getKey();
+//            List<Genres> genres = element.getValue();
+//            for(Genres g : genres){
+//                Genres persistedGenre = genresRepository.doesGenreExist(g.getName());
+//                book.getGenres().add(persistedGenre);
+//            }
+//            bookRepository.save(book);
+//        }
 
-        for(Genres genre: collection){
-            service.saveGenre(genre.getName());
-        }
 
-        for(Map.Entry<Book, List<Genres>> element : bookCollection.entrySet()){
-            Book book = element.getKey();
-            List<Genres> genres = element.getValue();
-            for(Genres g : genres){
-                Genres persistedGenre = genresRepository.doesGenreExist(g.getName());
-                book.getGenres().add(persistedGenre);
-            }
-            bookRepository.save(book);
-        }
+
         System.out.println(":: DB INIT FINISHED");
     }
 }

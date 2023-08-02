@@ -23,7 +23,7 @@ export default function Home() {
   const [month, setMonth] = useState();
 
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   //holds the requested user's filters
   const [filters, setFilters] = useState({
     year: null,
@@ -31,7 +31,6 @@ export default function Home() {
     formats: [],
     genres: [],
   });
-
 
   //At initial mount, get all the books,genres, and formats from the database
 
@@ -49,14 +48,11 @@ export default function Home() {
     setMonth(month);
   }
 
-  
   return (
-    <div>
-      <Navbar />
-
+    <div className="p-3">
       {/* className should be called searchbar-container*/}
       <div className="filter-container ">
-        <Searchbar searchQuery = {searchQuery} setSearchQuery = {setSearchQuery}/>
+        <Searchbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         {/* <Filter className = 'filters' filterCallback={filterCallback}/>
           <Searchbar getSearchedBook={getSearchedBook}/> */}
       </div>
@@ -71,7 +67,7 @@ export default function Home() {
         />
 
         {hasError && <p>{errMessage}</p>}
-        <BookList searchQuery = {searchQuery}/>
+        <BookList searchQuery={searchQuery} />
       </div>
     </div>
   );

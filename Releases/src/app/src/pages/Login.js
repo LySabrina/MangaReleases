@@ -13,7 +13,7 @@ export default function Login() {
 
   return (
     <div>
-      <Navbar />
+    
       <form className ="container">
         <div className = 'form-group m-2'>
           <label htmlFor = "exampleInputEmail1">Email Address</label>
