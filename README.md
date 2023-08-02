@@ -8,6 +8,6 @@ to get the data and display it. Users can cycle through pages to view books and 
 ![Home Page](Releases/src/main/resources/DemoPhotos/Home.png "Home Page")
 
 ### Book Details
-![Book Details](Releases/src/main/resources/DemoPhotos/BookDetails.png, "Book Details")
+![Book Details](Releases/src/main/resources/DemoPhotos/BookDetails.png "Book Details")
 
 
